@@ -23,10 +23,9 @@ public class ClaseImagen
 
 		// ===== 1. Leer imagen =====
 		BufferedImage image = ImageIO.read(new File(inputPath));
-		
+
 		// Convertir a Mat (BGR)
 		Mat mat = bufferedImageToMat(image);
-
 
 		// ===== 2. Convertir a RGB =====
 		Mat rgbMat = new Mat();
@@ -61,12 +60,11 @@ public class ClaseImagen
 		return mob.toArray();
 	}
 
-	private static Mat bufferedImageToMat(BufferedImage bi)
+	public static Mat bufferedImageToMat(BufferedImage bi)
 	{
 
 		Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
-		
-		
+
 		int[] data = bi.getRGB(0, 0, bi.getWidth(), bi.getHeight(), null, 0, bi.getWidth());
 
 		byte[] bytes = new byte[bi.getWidth() * bi.getHeight() * 3];
@@ -80,16 +78,16 @@ public class ClaseImagen
 		}
 
 		mat.put(0, 0, bytes);
-		double[]datag=mat.get(140, 1000);
-		
+		double[] datag = mat.get(140, 1000);
+
 		System.out.println(datag[0]);
 		System.out.println(datag[1]);
 		System.out.println(datag[2]);
-		
+
 		return mat;
 	}
 
-	private static BufferedImage matToBufferedImage(Mat mat)
+	public static BufferedImage matToBufferedImage(Mat mat)
 	{
 
 		int type = BufferedImage.TYPE_3BYTE_BGR;
@@ -102,7 +100,7 @@ public class ClaseImagen
 		return image;
 	}
 
-	private static Mat correct(Mat mat)
+	public static Mat correct(Mat mat)
 	{
 
 		// copiar imagen original
