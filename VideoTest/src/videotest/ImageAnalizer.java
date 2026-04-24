@@ -12,9 +12,6 @@ import org.opencv.core.MatOfInt;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.VideoWriter;
-import org.opencv.videoio.Videoio;
 
 public class ImageAnalizer
 {
@@ -38,19 +35,19 @@ public class ImageAnalizer
 		List<Mat> channels = new ArrayList<>();
 		Core.split(mat, channels);
 
-		Mat b = channels.get(0);
+		Mat r = channels.get(0);
 		Mat g = channels.get(1);
-		Mat r = channels.get(2);
+		Mat b = channels.get(2);
 
 		// aplicar coeficientes
 		Core.multiply(r, new Scalar(rCoef), r);
 		Core.multiply(g, new Scalar(gCoef), g);
 		Core.multiply(b, new Scalar(bCoef), b);
-
+		Mat dst = new Mat();
 		// volver a unir
-		Core.merge(Arrays.asList(b, g, r), mat);
-
-		return mat;
+		Core.merge(Arrays.asList(r, g, b), dst);
+		lalala(h,mat,dst);
+		return dst;
 	}
 
 	private static double[] hueShiftRedVec(double[] rgb, double h)
@@ -145,14 +142,278 @@ public class ImageAnalizer
 		return dst;
 	}
 
-	public static double[] getFilterMatrix(Mat mat)
+	public static double[] getFilterMatrix(Mat inputRgb)
 	{
 
-		// 1. Resize
-		Imgproc.resize(mat, mat, new Size(256, 256));
+		// 1) Trabajar sobre copia redimensionada
+		Mat mat = new Mat();
+		Imgproc.resize(inputRgb, mat, new Size(256, 256));
 
-		// 2. Promedio BGR
+		// Pasar a float para evitar problemas al multiplicar
+		mat.convertTo(mat, CvType.CV_32FC3);
+
+		// 2) Promedio RGB
 		Scalar mean = Core.mean(mat);
+
+		Mat avgMat = new Mat(1, 1, CvType.CV_32FC3);
+		
+		avgMat.put(0, 0, (int) mean.val[0], (int) mean.val[1], (int) mean.val[2]);
+
+		// 3) Buscar hue shift
+		double newAvgR = mean.val[0];
+		int hueShift = 0;
+
+		while (newAvgR < MIN_AVG_RED)
+		{
+
+			Mat shiftedAvg = hueShiftRed(avgMat.clone(), hueShift);
+
+			float[] avgVals = new float[3];
+			shiftedAvg.get(0, 0, avgVals);
+
+			newAvgR = avgVals[0] + avgVals[1] + avgVals[2];
+
+			hueShift++;
+
+			if (hueShift > MAX_HUE_SHIFT)
+			{
+				newAvgR = MIN_AVG_RED;
+			}
+		}
+
+		// 4) Aplicar hue shift a la imagen
+		Mat shiftedMat = hueShiftRed(mat.clone(), hueShift);
+
+		List<Mat> channels = new ArrayList<>();
+		Core.split(shiftedMat, channels);
+
+		Mat newR = new Mat();
+		Core.add(channels.get(0), channels.get(1), newR);
+		Core.add(newR, channels.get(2), newR);
+
+		Core.min(newR, new Scalar(255), newR);
+		Core.max(newR, new Scalar(0), newR);
+
+		// Reemplazar canal rojo (RGB → índice 0)
+		channels.set(0, newR);
+		Core.merge(channels, mat);
+
+		// Convertir a 8 bits para histograma
+		Mat histMat = new Mat();
+		mat.convertTo(histMat, CvType.CV_8UC3);
+
+		// 5) Histogramas
+		Mat histR = new Mat();
+		Mat histG = new Mat();
+		Mat histB = new Mat();
+
+		Imgproc.calcHist(Arrays.asList(histMat), new MatOfInt(0), new Mat(), histR, new MatOfInt(256),
+				new MatOfFloat(0, 256));
+
+		Imgproc.calcHist(Arrays.asList(histMat), new MatOfInt(1), new Mat(), histG, new MatOfInt(256),
+				new MatOfFloat(0, 256));
+
+		Imgproc.calcHist(Arrays.asList(histMat), new MatOfInt(2), new Mat(), histB, new MatOfInt(256),
+				new MatOfFloat(0, 256));
+
+		double[][] normalizeMat = new double[256][3];
+
+		double threshold = (histMat.rows() * histMat.cols()) / (double) THRESHOLD_RATIO;
+
+		for (int x = 0; x < 256; x++)
+		{
+
+			if (histR.get(x, 0)[0] < threshold)
+				normalizeMat[x][0] = x;
+
+			if (histG.get(x, 0)[0] < threshold)
+				normalizeMat[x][1] = x;
+
+			if (histB.get(x, 0)[0] < threshold)
+				normalizeMat[x][2] = x;
+		}
+
+		normalizeMat[255][0] = 255;
+		normalizeMat[255][1] = 255;
+		normalizeMat[255][2] = 255;
+
+		// 6) Intervalos
+		double[] rInterval = normalizingInterval(column(normalizeMat, 0));
+		double[] gInterval = normalizingInterval(column(normalizeMat, 1));
+		double[] bInterval = normalizingInterval(column(normalizeMat, 2));
+
+		double adjustRLow = rInterval[0];
+		double adjustRHigh = rInterval[1];
+		double adjustGLow = gInterval[0];
+		double adjustGHigh = gInterval[1];
+		double adjustBLow = bInterval[0];
+		double adjustBHigh = bInterval[1];
+
+		// 7) Hue shift sobre [1,1,1] como matriz
+		Mat ones = new Mat(1, 1, CvType.CV_32FC3);
+		ones.put(0, 0, 1f, 1f, 1f);
+
+		Mat shiftedOnes = hueShiftRed(ones, hueShift);
+
+		float[] vals = new float[3];
+		shiftedOnes.get(0, 0, vals);
+
+		double shiftedR = vals[0];
+		double shiftedG = vals[1];
+		double shiftedB = vals[2];
+
+		// 8) Gains
+		double redGain = 256.0 / (adjustRHigh - adjustRLow);
+		double greenGain = 256.0 / (adjustGHigh - adjustGLow);
+		double blueGain = 256.0 / (adjustBHigh - adjustBLow);
+
+		// 9) Offsets
+		double redOffset = (-adjustRLow / 256.0) * redGain;
+		double greenOffset = (-adjustGLow / 256.0) * greenGain;
+		double blueOffset = (-adjustBLow / 256.0) * blueGain;
+
+		// 10) Ajustes finales
+		double adjustRed = shiftedR * redGain;
+		double adjustRedGreen = shiftedG * redGain;
+		double adjustRedBlue = shiftedB * redGain * BLUE_MAGIC_VALUE;
+
+		// 11) Resultado
+		return new double[]
+		{ adjustRed, adjustRedGreen, adjustRedBlue, 0, redOffset, 0, greenGain, 0, 0, greenOffset, 0, 0, blueGain, 0,
+				blueOffset, 0, 0, 0, 1, 0 };
+	}
+
+	public static double[] getFilterMatrix2(Mat inputRgb)
+	{
+		// Trabajar sobre copia (NO tocar original)
+		Mat mat = new Mat();
+		Imgproc.resize(inputRgb, mat, new Size(256, 256));
+
+		// 2. Promedio RGB
+		Scalar mean = Core.mean(mat);
+		double[] avg = new double[]
+		{ mean.val[0], // R
+				mean.val[1], // G
+				mean.val[2] // B
+		};
+
+		// 3. Buscar hue shift
+		double newAvgR = avg[0];
+		int hueShift = 0;
+
+		while (newAvgR < MIN_AVG_RED)
+		{
+			double[] shifted = hueShiftRedVec(avg, hueShift);
+
+			newAvgR = shifted[0] + shifted[1] + shifted[2];
+
+			hueShift++;
+
+			if (hueShift > MAX_HUE_SHIFT)
+			{
+				newAvgR = MIN_AVG_RED;
+			}
+		}
+
+		// 4. Aplicar hue shift (sobre copia)
+		Mat shiftedMat = hueShiftRed(mat, hueShift);
+
+		// 5. Nuevo canal R = suma de canales
+		List<Mat> ch = new ArrayList<>();
+		Core.split(shiftedMat, ch);
+
+		Mat newR = new Mat();
+		Core.add(ch.get(0), ch.get(1), newR);
+		Core.add(newR, ch.get(2), newR);
+
+		Core.min(newR, new Scalar(255), newR);
+		Core.max(newR, new Scalar(0), newR);
+
+		ch.set(0, newR); // canal R (recordá: estamos en RGB)
+		Core.merge(ch, mat);
+
+		// 6. Histogramas
+		Mat histR = new Mat();
+		Mat histG = new Mat();
+		Mat histB = new Mat();
+
+		Imgproc.calcHist(Arrays.asList(mat), new MatOfInt(0), new Mat(), histR, new MatOfInt(256),
+				new MatOfFloat(0, 256));
+		Imgproc.calcHist(Arrays.asList(mat), new MatOfInt(1), new Mat(), histG, new MatOfInt(256),
+				new MatOfFloat(0, 256));
+		Imgproc.calcHist(Arrays.asList(mat), new MatOfInt(2), new Mat(), histB, new MatOfInt(256),
+				new MatOfFloat(0, 256));
+
+		double[][] normalizeMat = new double[256][3];
+
+		double threshold = (mat.rows() * mat.cols()) / THRESHOLD_RATIO;
+
+		for (int x = 0; x < 256; x++)
+		{
+
+			if (histR.get(x, 0)[0] < threshold)
+				normalizeMat[x][0] = x;
+
+			if (histG.get(x, 0)[0] < threshold)
+				normalizeMat[x][1] = x;
+
+			if (histB.get(x, 0)[0] < threshold)
+				normalizeMat[x][2] = x;
+		}
+
+		normalizeMat[255][0] = 255;
+		normalizeMat[255][1] = 255;
+		normalizeMat[255][2] = 255;
+
+		// 7. Intervalos útiles
+		double[] rInterval = normalizingInterval(column(normalizeMat, 0));
+		double[] gInterval = normalizingInterval(column(normalizeMat, 1));
+		double[] bInterval = normalizingInterval(column(normalizeMat, 2));
+
+		double adjustRLow = rInterval[0];
+		double adjustRHigh = rInterval[1];
+		double adjustGLow = gInterval[0];
+		double adjustGHigh = gInterval[1];
+		double adjustBLow = bInterval[0];
+		double adjustBHigh = bInterval[1];
+
+		// 8. Hue shift sobre blanco
+		double[] shifted = hueShiftRedVec(new double[]
+		{ 1, 1, 1 }, hueShift);
+
+		double shiftedR = shifted[0];
+		double shiftedG = shifted[1];
+		double shiftedB = shifted[2];
+
+		// 9. Ganancias
+		double redGain = 256.0 / (adjustRHigh - adjustRLow);
+		double greenGain = 256.0 / (adjustGHigh - adjustGLow);
+		double blueGain = 256.0 / (adjustBHigh - adjustBLow);
+
+		// 10. Offsets
+		double redOffset = (-adjustRLow / 256.0) * redGain;
+		double greenOffset = (-adjustGLow / 256.0) * greenGain;
+		double blueOffset = (-adjustBLow / 256.0) * blueGain;
+
+		// 11. Ajuste final
+		double adjustRed = shiftedR * redGain;
+		double adjustRedGreen = shiftedG * redGain;
+		double adjustRedBlue = shiftedB * redGain * BLUE_MAGIC_VALUE;
+
+		// 12. Matriz final
+		return new double[]
+		{ adjustRed, adjustRedGreen, adjustRedBlue, 0, redOffset, 0, greenGain, 0, 0, greenOffset, 0, 0, blueGain, 0,
+				blueOffset, 0, 0, 0, 1, 0 };
+	}
+
+	public static double[] getFilterMatrixOLD(Mat mat)
+	{
+		Mat resized = new Mat();
+		// 1. Resize
+		Imgproc.resize(mat, resized, new Size(256, 256));
+
+		// 2. Promedio RGB
+		Scalar mean = Core.mean(resized);
 		double[] avg = new double[]
 		{ mean.val[0], mean.val[1], mean.val[2] };
 
@@ -163,10 +424,8 @@ public class ImageAnalizer
 		while (newAvgR < MIN_AVG_RED)
 		{
 			double[] shifted = hueShiftRedVec(avg, hueShift);
-			double[] sum = new double[3];
-			newAvgR = shifted[0] + shifted[1] + shifted[2];
-			newAvgR = sum[0] + sum[1] + sum[2];
 
+			newAvgR = shifted[0] + shifted[1] + shifted[2];
 			hueShift++;
 
 			if (hueShift > MAX_HUE_SHIFT)
@@ -299,6 +558,25 @@ public class ImageAnalizer
 				f[9] * 255, // G
 				f[4] * 255 // R
 		);
+	}
+	
+	private static void lalala(double h, Mat mat, Mat result) {
+		if (
+			    (mat.rows() == 1 && mat.cols() == 1 && mat.channels() == 3) ||
+			    (mat.rows() == 1 && mat.cols() == 3 && mat.channels() == 1)
+			) {
+			    float[] vals = new float[3];
+			    result.get(0, 0, vals);
+
+			    System.out.print("h=" + h + " -> ");
+
+			    for (int i = 0; i < vals.length; i++) {
+			        System.out.print(String.format("%.10f", vals[i]));
+			        if (i < vals.length - 1) System.out.print(",");
+			    }
+
+			    System.out.println();
+			}
 	}
 
 }

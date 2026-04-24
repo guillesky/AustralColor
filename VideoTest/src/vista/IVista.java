@@ -8,6 +8,7 @@ public interface IVista
 {
 
 	String ANALIZAR = "ANALIZAR";
+	String GUARDAR = "GUARDAR";
 
 	void setImage(BufferedImage bufferedImage);
 

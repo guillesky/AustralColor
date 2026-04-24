@@ -23,13 +23,15 @@ public class Ventana extends JFrame implements IVista
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JScrollPane scrollPane;
-	private JPanel panel;
+	private JScrollPane scrollPaneImagen;
+	private JPanel panelBotones;
 	private JButton btnAnalize;
 	private JPanel panel_1;
 	private JLabel lblImage;
-	private JScrollPane scrollPane_1;
+	private JScrollPane scrollPaneLog;
 	private JTextArea textArea;
+	private JButton btnGuardar;
+	private JPanel panel;
 	
 	
 	
@@ -53,28 +55,35 @@ public class Ventana extends JFrame implements IVista
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 
-		scrollPane = new JScrollPane();
-		contentPane.add(scrollPane, BorderLayout.CENTER);
+		scrollPaneImagen = new JScrollPane();
+		contentPane.add(scrollPaneImagen, BorderLayout.CENTER);
 
 		lblImage = new JLabel("");
-		scrollPane.setViewportView(lblImage);
+		scrollPaneImagen.setViewportView(lblImage);
 
-		panel = new JPanel();
-		contentPane.add(panel, BorderLayout.WEST);
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		panelBotones = new JPanel();
+		contentPane.add(panelBotones, BorderLayout.WEST);
+		panelBotones.setLayout(new GridLayout(0, 1, 0, 0));
 
 		panel_1 = new JPanel();
-		panel.add(panel_1);
+		panelBotones.add(panel_1);
 
 		btnAnalize = new JButton("Analizar");
 		panel_1.add(btnAnalize);
 		this.btnAnalize.setActionCommand(IVista.ANALIZAR);
-		scrollPane_1 = new JScrollPane();
-		scrollPane_1.setPreferredSize(new Dimension(2, 200));
-		contentPane.add(scrollPane_1, BorderLayout.SOUTH);
+		
+		panel = new JPanel();
+		panelBotones.add(panel);
+		
+		btnGuardar = new JButton("Guardar");
+		panel.add(btnGuardar);
+		btnGuardar.setActionCommand(IVista.GUARDAR);
+		scrollPaneLog = new JScrollPane();
+		scrollPaneLog.setPreferredSize(new Dimension(2, 200));
+		contentPane.add(scrollPaneLog, BorderLayout.SOUTH);
 		
 		textArea = new JTextArea();
-		scrollPane_1.setViewportView(textArea);
+		scrollPaneLog.setViewportView(textArea);
 		this.setVisible(true);
 
 	}
@@ -90,6 +99,7 @@ public class Ventana extends JFrame implements IVista
 	public void setControlador(Controlador controlador)
 	{
 		this.btnAnalize.addActionListener(controlador);
+		this.btnGuardar.addActionListener(controlador);
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import videotest.ClaseImagen;
 import videotest.ImageAnalizer;
@@ -57,7 +59,20 @@ public class Controlador implements ActionListener
 			this.analizar();
 			break;
 		}
+		case IVista.GUARDAR:
+		{
+			this.guardar();
+			break;
 		}
+		}
+
+	}
+
+	private void guardar()
+	{
+		Mat bgr = new Mat();
+		Imgproc.cvtColor(mat, bgr, Imgproc.COLOR_RGB2BGR);
+		Imgcodecs.imwrite("salida.jpg", bgr);
 
 	}
 
