@@ -271,10 +271,6 @@ public class Clase
 		return result;
 	}
 
-	
-
-	
-
 	private Mat correct(Mat mat)
 	{
 
@@ -293,156 +289,137 @@ public class Clase
 		return correctedMat;
 	}
 
-	private VideoAnalysisResult analyzeVideo(String inputPath, String outputPath) {
+	private VideoAnalysisResult analyzeVideo(String inputPath, String outputPath)
+	{
 
-	    VideoCapture cap = new VideoCapture(inputPath);
+		VideoCapture cap = new VideoCapture(inputPath);
 
-	    int fps = (int) Math.ceil(cap.get(Videoio.CAP_PROP_FPS));
-	    int frameCount = (int) Math.ceil(cap.get(Videoio.CAP_PROP_FRAME_COUNT));
+		int fps = (int) Math.ceil(cap.get(Videoio.CAP_PROP_FPS));
+		int frameCount = (int) Math.ceil(cap.get(Videoio.CAP_PROP_FRAME_COUNT));
 
-	    List<Integer> filterIndexes = new ArrayList<>();
-	    List<double[]> filterMatrices = new ArrayList<>();
+		List<Integer> filterIndexes = new ArrayList<>();
+		List<double[]> filterMatrices = new ArrayList<>();
 
-	    int count = 0;
-	    Mat frame = new Mat();
+		int count = 0;
+		Mat frame = new Mat();
 
-	    System.out.println("Analyzing...");
+		System.out.println("Analyzing...");
+		VideoAnalysisResult result = new VideoAnalysisResult(inputPath, outputPath, fps, frameCount);
 
-	    while (cap.read(frame)) {
+		while (cap.read(frame))
+		{
 
-	        count++;
-	        System.out.print(count + " frames\r");
+			System.out.print(count + " frames\r");
 
-	        // cada N segundos
-	        if (count % (fps * SAMPLE_SECONDS) == 0) {
+			// cada N segundos
+			if (count % (fps * SAMPLE_SECONDS) == 0)
+			{
 
-	            Mat rgb = new Mat();
-	            Imgproc.cvtColor(frame, rgb, Imgproc.COLOR_BGR2RGB);
+				Mat rgb = new Mat();
+				Imgproc.cvtColor(frame, rgb, Imgproc.COLOR_BGR2RGB);
 
-	            filterIndexes.add(count);
-	            filterMatrices.add(getFilterMatrix(rgb));
-	        }
-	    }
+				filterIndexes.add(count);
+				filterMatrices.add(getFilterMatrix(rgb));
+			}
+			count++;
+		}
 
-	    cap.release();
+		cap.release();
 
-	    VideoAnalysisResult result = new VideoAnalysisResult();
-	    result.inputPath = inputPath;
-	    result.outputPath = outputPath;
-	    result.fps = fps;
-	    result.frameCount = count;
-	    result.filters = filterMatrices;
-	    result.filterIndices = filterIndexes;
-
-	    return result;
-	}
-	
-	
-	private double[][] precomputeFilterMatrices(
-	        int frameCount,
-	        List<Integer> filterIndices,
-	        List<double[]> filterMatrices) {
-
-	    int filterSize = filterMatrices.get(0).length;
-
-	    double[][] result = new double[frameCount][filterSize];
-
-	    for (int f = 0; f < frameCount; f++) {
-
-	        // encontrar segmento
-	        int i = 0;
-	        while (i < filterIndices.size() - 1 && filterIndices.get(i + 1) < f) {
-	            i++;
-	        }
-
-	        // bordes
-	        if (f <= filterIndices.get(0)) {
-	            result[f] = filterMatrices.get(0).clone();
-	            continue;
-	        }
-
-	        if (f >= filterIndices.get(filterIndices.size() - 1)) {
-	            result[f] = filterMatrices.get(filterMatrices.size() - 1).clone();
-	            continue;
-	        }
-
-	        int f0 = filterIndices.get(i);
-	        int f1 = filterIndices.get(i + 1);
-
-	        double[] m0 = filterMatrices.get(i);
-	        double[] m1 = filterMatrices.get(i + 1);
-
-	        double t = (double)(f - f0) / (f1 - f0);
-
-	        double[] interpolated = new double[filterSize];
-
-	        for (int x = 0; x < filterSize; x++) {
-	            interpolated[x] = m0[x] * (1 - t) + m1[x] * t;
-	        }
-
-	        result[f] = interpolated;
-	    }
-
-	    return result;
+		return result;
 	}
 
-	private void processVideo(VideoAnalysisResult data) {
+	private double[][] precomputeFilterMatrices(int frameCount, List<Integer> filterIndices,
+			List<double[]> filterMatrices)
+	{
 
-	    VideoCapture cap = new VideoCapture(data.inputPath);
+		int filterSize = filterMatrices.get(0).length;
 
-	    int frameWidth = (int) cap.get(Videoio.CAP_PROP_FRAME_WIDTH);
-	    int frameHeight = (int) cap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
-	    int fps = data.fps;
-	    int frameCount = data.frameCount;
+		double[][] result = new double[frameCount][filterSize];
 
-	    // ⚠️ probablemente esto NO funcione bien (ya lo viste)
-	    int fourcc = VideoWriter.fourcc('m','p','4','v');
-	    VideoWriter writer = new VideoWriter(
-	            data.outputPath,
-	            fourcc,
-	            fps,
-	            new Size(frameWidth, frameHeight)
-	    );
+		for (int f = 0; f < frameCount; f++)
+		{
 
-	    // ===== Precompute =====
-	    System.out.println("Precomputing filter matrices...");
+			// encontrar segmento
+			int i = 0;
+			while (i < filterIndices.size() - 1 && filterIndices.get(i + 1) < f)
+			{
+				i++;
+			}
 
-	    double[][] interpolated = precomputeFilterMatrices(
-	            frameCount,
-	            data.filterIndices,
-	            data.filters
-	    );
+			// bordes
+			if (f <= filterIndices.get(0))
+			{
+				result[f] = filterMatrices.get(0).clone();
+				continue;
+			}
 
-	    // ===== Procesamiento =====
-	    System.out.println("Processing...");
+			if (f >= filterIndices.get(filterIndices.size() - 1))
+			{
+				result[f] = filterMatrices.get(filterMatrices.size() - 1).clone();
+				continue;
+			}
 
-	    Mat frame = new Mat();
-	    Mat rgb = new Mat();
-	    Mat corrected;
+			int f0 = filterIndices.get(i);
+			int f1 = filterIndices.get(i + 1);
 
-	    int count = 0;
+			double[] m0 = filterMatrices.get(i);
+			double[] m1 = filterMatrices.get(i + 1);
 
-	    while (cap.read(frame)) {
+			double t = (double) (f - f0) / (f1 - f0);
 
-	        count++;
+			double[] interpolated = new double[filterSize];
 
-	        double percent = 100.0 * count / frameCount;
-	        System.out.printf("%.2f%%\r", percent);
+			for (int x = 0; x < filterSize; x++)
+			{
+				interpolated[x] = m0[x] * (1 - t) + m1[x] * t;
+			}
 
-	        // BGR → RGB
-	        Imgproc.cvtColor(frame, rgb, Imgproc.COLOR_BGR2RGB);
+			result[f] = interpolated;
+		}
 
-	        // aplicar filtro
-	        corrected = applyFilter(rgb, interpolated[count - 1]);
-
-	        // RGB → BGR
-	        Imgproc.cvtColor(corrected, corrected, Imgproc.COLOR_RGB2BGR);
-
-	        // escribir frame
-	        writer.write(corrected);
-	    }
-
-	    cap.release();
-	    writer.release();
+		return result;
 	}
+	/*
+	 * private void processVideo(VideoAnalysisResult data) {
+	 * 
+	 * VideoCapture cap = new VideoCapture(data.getInputPath());
+	 * 
+	 * int frameWidth = (int) cap.get(Videoio.CAP_PROP_FRAME_WIDTH); int frameHeight
+	 * = (int) cap.get(Videoio.CAP_PROP_FRAME_HEIGHT); int fps = data.getFps(); int
+	 * frameCount = data.getFrameCount();
+	 * 
+	 * // ⚠️ probablemente esto NO funcione bien (ya lo viste) int fourcc =
+	 * VideoWriter.fourcc('m','p','4','v'); VideoWriter writer = new VideoWriter(
+	 * data.getOutputPath(), fourcc, fps, new Size(frameWidth, frameHeight) );
+	 * 
+	 * // ===== Precompute =====
+	 * System.out.println("Precomputing filter matrices...");
+	 * 
+	 * double[][] interpolated = precomputeFilterMatrices( frameCount,
+	 * data.filterIndices, data.filters );
+	 * 
+	 * // ===== Procesamiento ===== System.out.println("Processing...");
+	 * 
+	 * Mat frame = new Mat(); Mat rgb = new Mat(); Mat corrected;
+	 * 
+	 * int count = 0;
+	 * 
+	 * while (cap.read(frame)) {
+	 * 
+	 * count++;
+	 * 
+	 * double percent = 100.0 * count / frameCount; System.out.printf("%.2f%%\r",
+	 * percent);
+	 * 
+	 * // BGR → RGB Imgproc.cvtColor(frame, rgb, Imgproc.COLOR_BGR2RGB);
+	 * 
+	 * // aplicar filtro corrected = applyFilter(rgb, interpolated[count - 1]);
+	 * 
+	 * // RGB → BGR Imgproc.cvtColor(corrected, corrected, Imgproc.COLOR_RGB2BGR);
+	 * 
+	 * // escribir frame writer.write(corrected); }
+	 * 
+	 * cap.release(); writer.release(); }
+	 */
 }

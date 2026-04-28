@@ -9,8 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import videotest.ClaseImagen;
-import videotest.ImageAnalizer;
+import videotest.ImageProcessor;
 import vista.IVista;
 import vista.Ventana;
 
@@ -18,22 +17,16 @@ public class Controlador implements ActionListener
 {
 	private IVista vista;
 	private BufferedImage originalImage;
-	private Mat mat;
+	private Mat originalMat;
+	private Mat correctedMat;
 
-	public Controlador(BufferedImage image)
-	{
-		this.setVista(new Ventana());
-		this.originalImage = image;
-		this.vista.setImage(originalImage);
-		this.mat = ClaseImagen.bufferedImageToMat(image);
-
-	}
+	
 
 	public Controlador(Mat mat)
 	{
-		this.mat = mat;
+		this.originalMat = mat;
 		this.setVista(new Ventana());
-		this.originalImage = ClaseImagen.matToBufferedImage(mat);
+		this.originalImage = ImageProcessor.matToBufferedImage(mat);
 		this.vista.setImage(originalImage);
 
 	}
@@ -71,15 +64,20 @@ public class Controlador implements ActionListener
 	private void guardar()
 	{
 		Mat bgr = new Mat();
-		Imgproc.cvtColor(mat, bgr, Imgproc.COLOR_RGB2BGR);
+		Imgproc.cvtColor(originalMat, bgr, Imgproc.COLOR_RGB2BGR);
 		Imgcodecs.imwrite("salida.jpg", bgr);
 
 	}
 
 	private void analizar()
 	{
-		double[] filtros = ImageAnalizer.getFilterMatrix(mat);
+		double[] filtros = ImageProcessor.getFilterMatrix(originalMat);
 		this.vista.updateLog(Arrays.toString(filtros));
+		this.correctedMat= ImageProcessor.correct(originalMat);
+		this.vista.setImage(ImageProcessor.matToBufferedImage(this.correctedMat));
+		Mat bgr = new Mat();
+		Imgproc.cvtColor(this.correctedMat, bgr, Imgproc.COLOR_RGB2BGR);
+		Imgcodecs.imwrite("salida.jpg", bgr);
 
 	}
 
