@@ -9,7 +9,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-import videotest.ImageProcessor;
+import core.ImageProcessor;
 
 public class VideoTestFrames
 {
