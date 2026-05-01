@@ -85,12 +85,10 @@ public class VideoProcessor
 		int height = (int) cap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
 		double fps = cap.get(Videoio.CAP_PROP_FPS);
 
-		// System.out.println("Resolución: " + width + "x" + height);
-		// System.out.println("FPS: " + fps);
-
+		String ffmpegPath=Util.getFFmpegPath();
 		// ===== CONFIGURACIÓN FFMPEG =====
 
-		ProcessBuilder pb = new ProcessBuilder("ffmpeg", "-y",
+		ProcessBuilder pb = new ProcessBuilder(ffmpegPath, "-y",
 
 				// ===== VIDEO DESDE JAVA =====
 				"-f", "rawvideo", "-pixel_format", "bgr24", "-video_size", width + "x" + height, "-framerate",
