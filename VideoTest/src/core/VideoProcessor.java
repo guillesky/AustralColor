@@ -10,7 +10,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-public class VideoProcessor
+public class VideoProcessor extends Thread
 {
 	private static final int SAMPLE_SECONDS = 2; // Extracts color correction from every N seconds
 	private String inputPath;
@@ -18,8 +18,8 @@ public class VideoProcessor
 	private double fps;
 	private int frameCount;
 	private VideoAnalysisResult videoAnalysisResult = null;
-	private ArrayList<VideoProcessorListener> videoProcessorListeners = new ArrayList<VideoProcessorListener>();
-
+	private VideoProcessorManager videoProcessorManager;
+	
 	public String getInputPath()
 	{
 		return inputPath;
@@ -30,11 +30,12 @@ public class VideoProcessor
 		return outputPath;
 	}
 
-	public VideoProcessor(String inputPath, String outputPath)
+	public VideoProcessor(String inputPath,VideoProcessorManager videoProcessorManager)
 	{
 		super();
 		this.inputPath = inputPath;
-		this.outputPath = outputPath;
+		this.outputPath = inputPath+Util.getSufix();
+		this.videoProcessorManager=videoProcessorManager;
 	}
 
 	private void analyzeVideo()
@@ -70,12 +71,12 @@ public class VideoProcessor
 		}
 
 		cap.release();
-		for (VideoProcessorListener videoProcessorListener : this.videoProcessorListeners)
-			videoProcessorListener.videoAnalized(this, this.videoAnalysisResult);
+		this.videoProcessorManager.videoAnalized(this, this.videoAnalysisResult);
+		
 
 	}
 
-	public void processVideo() throws IOException, InterruptedException
+	private  void processVideo() throws IOException, InterruptedException
 	{
 
 		this.analyzeVideo();
@@ -111,9 +112,8 @@ public class VideoProcessor
 		pb.redirectError(ProcessBuilder.Redirect.to(logFile));
 		long start = System.nanoTime();
 		Process process = pb.start();
-		for (VideoProcessorListener videoProcessorListener : this.videoProcessorListeners)
-			videoProcessorListener.videoCorrectInitiated(this);
-
+		this.videoProcessorManager.videoCorrectInitiated(this);
+		
 		OutputStream ffmpegInput = process.getOutputStream();
 
 		Mat frame = new Mat();
@@ -135,9 +135,8 @@ public class VideoProcessor
 
 			// enviar a FFmpeg
 			ffmpegInput.write(data);
-			for (VideoProcessorListener videoProcessorListener : this.videoProcessorListeners)
-				videoProcessorListener.frameProcessed(this,frame, frameCount);
-
+			this.videoProcessorManager.frameProcessed(this,frame, frameCount);
+			
 			frame.release();
 
 
@@ -155,13 +154,10 @@ public class VideoProcessor
 		double elapsedMs = (end - start) / 1_000_000.0;
 
 		
+		this.videoProcessorManager.videoCorrectCompleted(this, elapsedMs);
 		
-		for (VideoProcessorListener videoProcessorListener : this.videoProcessorListeners)
-			videoProcessorListener.videoCorrectCompleted(this, elapsedMs);
 		
-//		System.out.println("Proceso terminado");
-//		System.out.println("Frames totales: " + frameCount);
-//		System.out.println("FFmpeg exit code: " + exitCode);
+		System.out.println("FFmpeg exit code: " + exitCode);
 	}
 
 	@Override
@@ -171,10 +167,19 @@ public class VideoProcessor
 				+ ", frameCount=" + frameCount + "]";
 	}
 
-	public void addVideoProcessorListener(ConsoleVideoProcessorListener videoProcessorListener)
+	@Override
+	public void run()
 	{
-		this.videoProcessorListeners.add(videoProcessorListener);
-
+	   try
+	   {
+	    this.processVideo();
+	   } catch (IOException | InterruptedException e)
+	   {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	   }
 	}
+
+	
 
 }

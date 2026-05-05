@@ -4,19 +4,34 @@ import java.io.File;
 
 public class Util
 {
-    public static String getFFmpegPath() {
-	    String os = System.getProperty("os.name").toLowerCase();
 
-	    String exeName = os.contains("win") ? "ffmpeg.exe" : "ffmpeg";
+    private static String sufix = "_corrected.mp4";
 
-	    File ffmpegFile = new File("ffmpeg", exeName);
+    public static String getFFmpegPath()
+    {
+	String os = System.getProperty("os.name").toLowerCase();
 
-	    if (!ffmpegFile.exists()) {
-	        throw new RuntimeException("No se encontró ffmpeg en: " + ffmpegFile.getAbsolutePath());
-	    }
+	String exeName = os.contains("win") ? "ffmpeg.exe" : "ffmpeg";
 
-	    return ffmpegFile.getAbsolutePath();
+	File ffmpegFile = new File("ffmpeg", exeName);
+
+	if (!ffmpegFile.exists())
+	{
+	    throw new RuntimeException("No se encontró ffmpeg en: " + ffmpegFile.getAbsolutePath());
 	}
-    
-    
+
+	return ffmpegFile.getAbsolutePath();
+    }
+
+    public static String getSufix()
+    {
+
+	return Util.sufix;
+    }
+
+    public static void setSufix(String sufix)
+    {
+	Util.sufix = sufix;
+    }
+
 }

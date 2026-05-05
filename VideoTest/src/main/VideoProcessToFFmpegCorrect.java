@@ -4,29 +4,30 @@ import org.opencv.core.Core;
 
 import core.ConsoleVideoProcessorListener;
 import core.VideoProcessor;
+import core.VideoProcessorManager;
 
 public class VideoProcessToFFmpegCorrect
 {
 
-	static
-	{
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
+    static
+    {
+	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
-	public static void main(String[] args) throws Exception
-	{
+    public static void main(String[] args) throws Exception
+    {
 
-		
-
-		
-		
-		
-		String input = "input.mp4";
-		String output = "output_interpolated.mp4";
-		VideoProcessor vp = new VideoProcessor(input, output);
-		ConsoleVideoProcessorListener cpl=new ConsoleVideoProcessorListener();
-		vp.addVideoProcessorListener(cpl);
-		vp.processVideo();
+	VideoProcessorManager videoProcessorManager = new VideoProcessorManager();
+	ConsoleVideoProcessorListener cpl = new ConsoleVideoProcessorListener();
+	videoProcessorManager.addVideoProcessorListener(cpl);
 	
-	}
+	
+	
+	VideoProcessor vp1 = new VideoProcessor("pezLeon.mp4", videoProcessorManager);
+	vp1.start();
+
+	
+	VideoProcessor vp2 = new VideoProcessor("input.mp4", videoProcessorManager);
+	vp2.start();
+    }
 }
