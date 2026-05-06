@@ -3,8 +3,8 @@ package main;
 import org.opencv.core.Core;
 
 import core.ConsoleVideoProcessorListener;
-import core.VideoProcessor;
-import core.VideoProcessorManager;
+import core.VideoProcessorTask;
+import core.MediaProcessorManager;
 
 public class VideoProcessToFFmpegCorrect
 {
@@ -17,17 +17,21 @@ public class VideoProcessToFFmpegCorrect
     public static void main(String[] args) throws Exception
     {
 
-	VideoProcessorManager videoProcessorManager = new VideoProcessorManager();
+	MediaProcessorManager videoProcessorManager = new MediaProcessorManager();
 	ConsoleVideoProcessorListener cpl = new ConsoleVideoProcessorListener();
 	videoProcessorManager.addVideoProcessorListener(cpl);
 	
 	
 	
-	VideoProcessor vp1 = new VideoProcessor("pezLeon.mp4", videoProcessorManager);
-	vp1.start();
+	VideoProcessorTask vp1 = new VideoProcessorTask("pezLeon.mp4","pezLeon_corrected.mp4", videoProcessorManager);
+	
 
 	
-	VideoProcessor vp2 = new VideoProcessor("input.mp4", videoProcessorManager);
-	vp2.start();
+	VideoProcessorTask vp2 = new VideoProcessorTask("input.mp4","input_corrected.mp4", videoProcessorManager);
+	Thread h1=new Thread(vp1);
+	Thread h2=new Thread(vp2);
+	h1.start();
+	h2.start();
+	
     }
 }

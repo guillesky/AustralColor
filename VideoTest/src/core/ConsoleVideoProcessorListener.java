@@ -2,11 +2,11 @@ package core;
 
 import org.opencv.core.Mat;
 
-public class ConsoleVideoProcessorListener implements VideoProcessorListener
+public class ConsoleVideoProcessorListener implements MediaProcessorListener
 {
 
 	@Override
-	public void videoAnalized(VideoProcessor videoProcessor, VideoAnalysisResult videoAnalysisResult)
+	public void videoAnalized(VideoProcessorTask videoProcessor, VideoAnalysisResult videoAnalysisResult)
 	{
 		System.out.println(videoProcessor);
 		System.out.println("Analisis Completo");
@@ -14,27 +14,36 @@ public class ConsoleVideoProcessorListener implements VideoProcessorListener
 	}
 
 	@Override
-	public void frameProcessed(VideoProcessor videoProcessor,Mat frame, int frameIndex)
+	public void frameProcessed(VideoProcessorTask videoProcessor, Mat frame, int frameIndex)
 	{
-		System.out.println(videoProcessor.getInputPath()+" Frame procesada:"+frameIndex);
+		System.out.println(videoProcessor.getInputPath() + " Frame procesada:" + frameIndex);
 
 	}
 
 	@Override
-	public void videoCorrectCompleted(VideoProcessor videoProcessor, double elapsedMs)
+	public void mediaCorrectCompleted(AbstractMediaProcessor abstractMediaProcessor, double elapsedMs)
 	{
-		System.out.println(videoProcessor.getInputPath());
+		System.out.println(abstractMediaProcessor.getInputPath());
 		System.out.println("Correccion completa");
-		System.out.println("Tiempo total: "+elapsedMs);
+		System.out.println("Tiempo total: " + elapsedMs);
 
 	}
 
 	@Override
-	public void videoCorrectInitiated(VideoProcessor videoProcessor)
+	public void mediaCorrectInitiated(AbstractMediaProcessor abstractMediaProcessor)
 	{
-		System.out.println(videoProcessor);
+		System.out.println(abstractMediaProcessor);
 		System.out.println("Correccion iniciada");
+
+	}
+
+	@Override
+	public void exceptionThrowed(Exception e)
+	{
+		System.out.println(e.getMessage());
 		
 	}
+	
+	
 
 }
