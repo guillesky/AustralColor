@@ -10,11 +10,11 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
-public class VideoProcessorTask extends AbstractMediaProcessor
+public class VideoTask extends AbstractMediaTask
 {
-	public VideoProcessorTask(String inputPath, String outputPath, MediaProcessorManager mediaProcessorManager)
+	public VideoTask(String inputPath, String outputPath, MediaTaskManager mediaTaskManager)
 	{
-		super(inputPath, outputPath, mediaProcessorManager);
+		super(inputPath, outputPath, mediaTaskManager);
 
 	}
 
@@ -56,7 +56,7 @@ public class VideoProcessorTask extends AbstractMediaProcessor
 		}
 
 		cap.release();
-		this.mediaProcessorManager.videoAnalized(this, this.videoAnalysisResult);
+		this.mediaTaskManager.videoAnalized(this, this.videoAnalysisResult);
 
 	}
 
@@ -121,7 +121,7 @@ public class VideoProcessorTask extends AbstractMediaProcessor
 
 				// enviar a FFmpeg
 				ffmpegInput.write(data);
-				this.mediaProcessorManager.frameProcessed(this, frame, frameCount);
+				this.mediaTaskManager.frameProcessed(this, frame, frameCount);
 
 				frame.release();
 

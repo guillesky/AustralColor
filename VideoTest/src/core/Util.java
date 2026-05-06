@@ -34,10 +34,10 @@ public class Util
 		Util.sufix = sufix;
 	}
 
-	public static AbstractMediaProcessor getAbstractMediaProcessorByType(String inputPath, String outputPath,
-			MediaProcessorManager mediaProcessorManager)
+	public static AbstractMediaTask getAbstractMediaProcessorByType(String inputPath, String outputPath,
+			MediaTaskManager mediaProcessorManager)
 	{
-		AbstractMediaProcessor result = new VideoProcessorTask(inputPath, outputPath, mediaProcessorManager);
+		AbstractMediaTask result = new VideoTask(inputPath, outputPath, mediaProcessorManager);
 		return result;
 	}
 }

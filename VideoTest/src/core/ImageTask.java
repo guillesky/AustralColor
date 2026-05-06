@@ -6,12 +6,12 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-public class ImageProcessorTask extends AbstractMediaProcessor
+public class ImageTask extends AbstractMediaTask
 {
 
-	public ImageProcessorTask(String inputPath, String outputPath, MediaProcessorManager mediaProcessorManager)
+	public ImageTask(String inputPath, String outputPath, MediaTaskManager mediaTaskManager)
 	{
-		super(inputPath, outputPath, mediaProcessorManager);
+		super(inputPath, outputPath, mediaTaskManager);
 
 	}
 
