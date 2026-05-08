@@ -85,7 +85,7 @@ public class MediaTaskManager implements MediaTaskListener
 
 	public synchronized void getResource(AbstractMediaTask abstractMediaTask)
 	{
-		while (this.mediaTasksProcessing.size() >= this.maxSimultaneousProcessing)
+		while (this.mediaTasksProcessing.size() >= this.maxSimultaneousProcessing && !this.isMyTurn(abstractMediaTask))
 		{
 			try
 			{
@@ -133,11 +133,23 @@ public class MediaTaskManager implements MediaTaskListener
 		notifyAll();
 	}
 
+	protected synchronized boolean isCanceled(AbstractMediaTask mediaTask) 
+	{
+		return this.mediaTasksCanceled.contains(mediaTask);
+	}
+	
 	public synchronized void addTask(AbstractMediaTask abstractMediaTask)
 	{
 
 		this.mediaTasksQueued.add(abstractMediaTask);
 
+	}
+
+	private synchronized boolean isMyTurn(AbstractMediaTask abstractMediaTask)
+	{
+		int index = this.mediaTasksQueued.indexOf(abstractMediaTask);
+		int available = this.maxSimultaneousProcessing - this.mediaTasksProcessing.size();
+		return index > -1 && index < available;
 	}
 
 }
