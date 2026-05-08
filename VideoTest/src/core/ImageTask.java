@@ -23,11 +23,10 @@ public class ImageTask extends AbstractMediaTask
 		Mat mat = Imgcodecs.imread(this.getInputPath());
 
 		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2RGB);
-		double[] filtros = ImageProcessor.getFilterMatrix(mat);
 		Mat correctedMat = ImageProcessor.correct(mat);
 
 		Imgproc.cvtColor(correctedMat, correctedMat, Imgproc.COLOR_RGB2BGR);
-		Imgcodecs.imwrite("salida.jpg", correctedMat);
+		Imgcodecs.imwrite(this.getOutputPath(), correctedMat);
 		mat.release();
 		correctedMat.release();
 		long end = System.nanoTime();

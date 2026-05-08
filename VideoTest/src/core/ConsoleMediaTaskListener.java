@@ -23,17 +23,14 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	@Override
 	public void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs)
 	{
-		System.out.println(abstractMediaTask.getInputPath());
-		System.out.println("Correccion completa");
-		System.out.println("Tiempo total: " + elapsedMs);
-
+		System.out.println(abstractMediaTask.getInputPath() + " Correccion completa - Tiempo total: " + elapsedMs+"\n**************************************************");
+		
 	}
 
 	@Override
 	public void mediaCorrectInitiated(AbstractMediaTask abstractMediaTask)
 	{
-		System.out.println(abstractMediaTask);
-		System.out.println("Correccion iniciada");
+		System.out.println(abstractMediaTask + "  Correccion iniciada \n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 	}
 

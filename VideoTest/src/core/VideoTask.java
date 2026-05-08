@@ -1,9 +1,7 @@
 package core;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -92,9 +90,9 @@ public class VideoTask extends AbstractMediaTask
 
 				// ===== OUTPUT =====
 				this.getOutputPath());
-		File logFile = new File("proceso.log");
-		pb.redirectOutput(ProcessBuilder.Redirect.to(logFile));
-		pb.redirectError(ProcessBuilder.Redirect.to(logFile));
+		//File logFile = new File("proceso.log");
+		pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+		pb.redirectError(ProcessBuilder.Redirect.DISCARD);
 
 		Process process;
 		try
