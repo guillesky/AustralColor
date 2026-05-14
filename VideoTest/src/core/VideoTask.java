@@ -19,7 +19,7 @@ public class VideoTask extends AbstractMediaTask
 	private static final int SAMPLE_SECONDS = 2; // Extracts color correction from every N seconds
 
 	private double fps;
-	private int frameCount;
+	private int totalFrameCount;
 	private VideoAnalysisResult videoAnalysisResult = null;
 
 	private void analyzeVideo()
@@ -28,7 +28,7 @@ public class VideoTask extends AbstractMediaTask
 
 		
 		this.fps = (int) cap.get(Videoio.CAP_PROP_FPS);
-		this.frameCount = (int) cap.get(Videoio.CAP_PROP_FRAME_COUNT);
+		this.totalFrameCount = (int) cap.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int count = 0;
 		Mat frame = new Mat();
 
@@ -41,7 +41,7 @@ public class VideoTask extends AbstractMediaTask
 			// System.out.print(count + " frames\r");
 
 			// cada N segundos
-			if (count % ((int) fps * SAMPLE_SECONDS) == 0 || count == frameCount - 1)
+			if (count % ((int) fps * SAMPLE_SECONDS) == 0 || count == totalFrameCount - 1)
 			{
 
 				Mat rgb = new Mat();
@@ -120,7 +120,12 @@ public class VideoTask extends AbstractMediaTask
 				// enviar a FFmpeg
 				ffmpegInput.write(data);
 				this.mediaTaskManager.frameProcessed(this, frame, frameCount);
-
+				double p=(double)frameCount*100/(double)this.totalFrameCount;
+				if((int)p!=this.percentageCompleted)
+				{
+				    this.percentageCompleted=(int) p;
+				    this.mediaTaskManager.updatePercentageCompleted(this);
+				}
 				frame.release();
 
 				frameCount++;
@@ -149,7 +154,7 @@ public class VideoTask extends AbstractMediaTask
 	public String toString()
 	{
 		return "VideoProcessor [inputPath=" + this.getInputPath() + ", outputPath=" + this.getOutputPath() + ", fps="
-				+ fps + ", frameCount=" + frameCount + "]";
+				+ fps + ", frameCount=" + totalFrameCount + "]";
 	}
 
 }

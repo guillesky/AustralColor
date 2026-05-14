@@ -3,7 +3,6 @@ package vista_Progress;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -12,14 +11,30 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
-public class VideoBatchUI
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+
+import core.AbstractMediaTask;
+import core.ConsoleMediaTaskListener;
+import core.MediaTaskListener;
+import core.MediaTaskManager;
+import core.VideoAnalysisResult;
+import core.VideoTask;
+
+public class VideoBatchUI implements MediaTaskListener
 {
 
     private JFrame frame;
     private JTable tabla;
-    private VideoTableModel modelo;
+    private TableModelAbstractMediaTak modelo;
+
+    private MediaTaskManager mediaTaskManager;
+
+    static
+    {
+	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
 
     public static void main(String[] args)
     {
@@ -32,10 +47,10 @@ public class VideoBatchUI
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setSize(700, 400);
 
-	modelo = new VideoTableModel();
-	
+	modelo = new TableModelAbstractMediaTak();
+
 	tabla = new JTableWithProgress(modelo, 1);
-	
+
 	JButton btnAgregar = new JButton("Agregar videos");
 	btnAgregar.addActionListener(this::agregarArchivos);
 
@@ -50,72 +65,87 @@ public class VideoBatchUI
 	frame.add(new JScrollPane(tabla), BorderLayout.CENTER);
 
 	frame.setVisible(true);
+
+	this.mediaTaskManager = new MediaTaskManager();
+	ConsoleMediaTaskListener cpl = new ConsoleMediaTaskListener();
+	
+	mediaTaskManager.addMediaTaskListener(cpl);
+	mediaTaskManager.addMediaTaskListener(this);
+	
+
+    }
+
+    private Object procesarCola()
+    {
+	this.mediaTaskManager.startTask();
+	return null;
     }
 
     private void agregarArchivos(ActionEvent e)
     {
-	JFileChooser chooser = new JFileChooser();
+
+	File currentDir = new File(System.getProperty("user.dir"));
+
+	JFileChooser chooser = new JFileChooser(currentDir);
+
 	chooser.setMultiSelectionEnabled(true);
 
 	if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 	{
 	    for (File f : chooser.getSelectedFiles())
 	    {
-		modelo.addVideo(new VideoItem(f.getAbsolutePath()));
+
+		VideoTask vt = new VideoTask(f.getAbsolutePath(), f.getAbsolutePath() + ".corrected.mp4",
+			mediaTaskManager);
+		mediaTaskManager.addTask(vt);
+		modelo.addVideo(vt);
 	    }
 	}
     }
 
-    private void procesarCola()
+    @Override
+    public void videoAnalized(VideoTask videoTask, VideoAnalysisResult videoAnalysisResult)
     {
-	new Thread(() ->
-	{
-	    for (int i = 0; i < modelo.getRowCount(); i++)
-	    {
-		procesarVideo(i);
-	    }
-	}).start();
+	// TODO Auto-generated method stub
+
     }
 
-    private void procesarVideo(int fila)
+    @Override
+    public void frameProcessed(VideoTask videoTask, Mat frame, int frameIndex)
     {
-	SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>()
-	{
+    }
 
-	    protected Void doInBackground() throws Exception
-	    {
-		modelo.setEstado(fila, "Procesando");
+    @Override
+    public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
+    {
+	
+	    SwingUtilities.invokeLater(() -> {
 
-		// Acá iría TU procesamiento real con OpenCV
-		for (int i = 0; i <= 1000; i++)
-		{
-		    publish(i);
-		    Thread.sleep(3); // simulación
-		}
+	        this.modelo.fireTableDataChanged();
 
-		return null;
-	    }
-
-	    protected void process(List<Integer> chunks)
-	    {
-		int val = chunks.get(chunks.size() - 1);
-		modelo.setProgreso(fila, val);
-	    }
-
-	    protected void done()
-	    {
-		modelo.setEstado(fila, "Terminado");
-	    }
-	};
-
-	worker.execute();
-
-	try
-	{
-	    worker.get(); // bloquea para hacerlo secuencial
-	} catch (Exception ex)
-	{
-	    ex.printStackTrace();
+	    });
 	}
+
+    
+
+    @Override
+    public void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs)
+    {
+	
     }
+
+    @Override
+    public void mediaCorrectInitiated(AbstractMediaTask abstractMediaTask)
+    {
+	
+
+    }
+
+    @Override
+    public void exceptionThrowed(Exception e)
+    {
+	// TODO Auto-generated method stub
+
+    }
+
 }

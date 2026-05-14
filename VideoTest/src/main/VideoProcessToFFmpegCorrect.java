@@ -24,7 +24,7 @@ public class VideoProcessToFFmpegCorrect
 	
 	
 	
-	VideoTask vp1 = new VideoTask("pezLeon.mp4","pezLeon_corrected.mp4", mediaTaskManager);
+	VideoTask vp1 = new VideoTask("C:\\Users\\Guille\\git\\ColorDiveCorrector\\VideoTest\\pezLeon.mp4","C:\\Users\\Guille\\git\\ColorDiveCorrector\\VideoTest\\pezLeon.mp4.corrected.mp4", mediaTaskManager);
 	
 
 	

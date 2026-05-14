@@ -5,14 +5,16 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-class VideoTableModel extends AbstractTableModel
+import core.AbstractMediaTask;
+
+class TableModelAbstractMediaTak extends AbstractTableModel
 {
 
-    private List<VideoItem> lista = new ArrayList<>();
+    private List<AbstractMediaTask> lista = new ArrayList<AbstractMediaTask>();
 
-    public void addVideo(VideoItem v)
+    public void addVideo(AbstractMediaTask abstractMediaTask)
     {
-	lista.add(v);
+	lista.add(abstractMediaTask);
 	fireTableRowsInserted(lista.size() - 1, lista.size() - 1);
     }
 
@@ -53,18 +55,18 @@ class VideoTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int row, int col)
     {
-	VideoItem v = lista.get(row);
+	AbstractMediaTask abstractMediaTask = lista.get(row);
 	Object result = null;
 	switch (col)
 	{
 	case 0:
-	    result = v.archivo;
+	    result = abstractMediaTask.getInputPath();
 	    break;
 	case 1:
-	    result = v.progreso;
+	    result = abstractMediaTask.getPercentageCompleted();
 	    break;
 	case 2:
-	    result = v.estado;
+	    result = abstractMediaTask.getStatus();
 	    break;
 
 	}
@@ -82,15 +84,5 @@ class VideoTableModel extends AbstractTableModel
 	return result;
     }
 
-    public void setProgreso(int row, int val)
-    {
-	lista.get(row).progreso = val;
-	fireTableCellUpdated(row, 1);
-    }
-
-    public void setEstado(int row, String estado)
-    {
-	lista.get(row).estado = estado;
-	fireTableCellUpdated(row, 2);
-    }
+ 
 }

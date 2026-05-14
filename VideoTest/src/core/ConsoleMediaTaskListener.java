@@ -16,7 +16,7 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	@Override
 	public void frameProcessed(VideoTask videoTask, Mat frame, int frameIndex)
 	{
-		System.out.println(videoTask.getInputPath() + " Frame procesada:" + frameIndex);
+		//System.out.println(videoTask.getInputPath() + " Frame procesada:" + frameIndex);
 
 	}
 
@@ -39,6 +39,13 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	{
 		System.out.println(e.getMessage());
 		
+	}
+
+	@Override
+	public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
+	{
+		System.out.println(abstractMediaTask.getInputPath() + " Porcentage: " + abstractMediaTask.getPercentageCompleted());
+ 
 	}
 	
 	

@@ -2,7 +2,7 @@ package i18n;
 
 public enum Messages
 {
-    ACCEPT("Aceptar"), CANCEL("Cancelar"), EXIT("Salir");
+    ACCEPT("Aceptar"), CANCEL("Cancelar"), EXIT("Salir"),FILE("Archivo"),STATUS("Estado"),COMPLETED("Completo");
 
     private String value;
     private Messages(String value)

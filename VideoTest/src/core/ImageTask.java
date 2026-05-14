@@ -34,4 +34,9 @@ public class ImageTask extends AbstractMediaTask
 		return elapsedMs;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "ImageProcessor: inputPath=" + this.getInputPath() + ", outputPath=" + this.getOutputPath();
+	}
 }

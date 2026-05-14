@@ -115,7 +115,7 @@ public class MediaTaskManager implements MediaTaskListener
 
 	}
 
-	public void startTask()
+	public synchronized void startTask()
 	{
 		for (AbstractMediaTask mediaTask : this.mediaTasksQueued)
 		{
@@ -150,6 +150,13 @@ public class MediaTaskManager implements MediaTaskListener
 		int index = this.mediaTasksQueued.indexOf(abstractMediaTask);
 		int available = this.maxSimultaneousProcessing - this.mediaTasksProcessing.size();
 		return index > -1 && index < available;
+	}
+
+	@Override
+	public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
+	{
+	    for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
+		mediaTaskListener.updatePercentageCompleted(abstractMediaTask);
 	}
 
 }
