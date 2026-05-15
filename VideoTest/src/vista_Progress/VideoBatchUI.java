@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -12,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
 import org.opencv.core.Core;
@@ -40,7 +40,15 @@ public class VideoBatchUI implements MediaTaskListener
 	}
 
 	public static void main(String[] args)
-	{
+	{ try
+	    {
+	        UIManager.setLookAndFeel(
+	                UIManager.getSystemLookAndFeelClassName());
+	    }
+	    catch (Exception e)
+	    {
+	        e.printStackTrace();
+	    }
 		SwingUtilities.invokeLater(() -> new VideoBatchUI().init());
 	}
 
@@ -88,23 +96,8 @@ public class VideoBatchUI implements MediaTaskListener
 
 		File currentDir = new File(System.getProperty("user.dir"));
 
-		JFileChooser chooser = new JFileChooser(currentDir);
-		FileFilter imageFilter = new FileFilter()
-		{
-			@Override
-			public boolean accept(File f)
-			{
-				return (f.isDirectory()||Util.getTypeExtension(f)==Util.TYPE_IMAGE);
-			}
-			@Override
-			public String getDescription()
-			{
-				return "Image files";
-			}
-		};
-		chooser.setMultiSelectionEnabled(true);
-
-		chooser.addChoosableFileFilter(imageFilter);
+		MediaFileChooser chooser = new MediaFileChooser(currentDir);
+	
 
 		if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
 		{
