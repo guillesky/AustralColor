@@ -6,18 +6,33 @@ import org.opencv.core.Mat;
 
 public class MediaTaskManager implements MediaTaskListener
 {
+	private static MediaTaskManager instance = null;
 	private boolean allCanceled = false;
 	private ArrayList<AbstractMediaTask> mediaTasksCanceled = new ArrayList<AbstractMediaTask>();
 	private ArrayList<AbstractMediaTask> mediaTasksQueued = new ArrayList<AbstractMediaTask>();
 	private ArrayList<AbstractMediaTask> mediaTasksProcessing = new ArrayList<AbstractMediaTask>();
 	private ArrayList<AbstractMediaTask> mediaTasksTerminated = new ArrayList<AbstractMediaTask>();
 	private int maxSimultaneousProcessing = 2;
+	private int taskWorking = 0;
 
 	private ArrayList<MediaTaskListener> mediaTaskListeners = new ArrayList<MediaTaskListener>();
 
-	public void removeMediaProcessorQueued(AbstractMediaTask mediaTask)
+	private MediaTaskManager()
+	{
+	}
+
+	public static MediaTaskManager getInstance()
+	{
+		if (instance == null)
+			instance = new MediaTaskManager();
+		return instance;
+	}
+
+	public synchronized void removeMediaTasksQueued(AbstractMediaTask mediaTask)
 	{
 		this.mediaTasksQueued.remove(mediaTask);
+		if(this.isWorking())
+			this.cancelTask(mediaTask);
 	}
 
 	public synchronized int getMaxSimultaneousProcessing()
@@ -77,7 +92,7 @@ public class MediaTaskManager implements MediaTaskListener
 
 	}
 
-	public void addMediaTaskListener(MediaTaskListener mediaTaskListener)
+	public synchronized void addMediaTaskListener(MediaTaskListener mediaTaskListener)
 	{
 		this.mediaTaskListeners.add(mediaTaskListener);
 
@@ -92,8 +107,7 @@ public class MediaTaskManager implements MediaTaskListener
 				wait();
 			} catch (InterruptedException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
 			}
 		}
 		this.mediaTasksQueued.remove(abstractMediaTask);
@@ -104,7 +118,13 @@ public class MediaTaskManager implements MediaTaskListener
 	{
 		this.mediaTasksProcessing.remove(abstractMediaTask);
 		this.mediaTasksTerminated.add(abstractMediaTask);
+		this.taskWorking--;
 		notifyAll();
+	}
+
+	public boolean isWorking()
+	{
+		return this.taskWorking != 0;
 	}
 
 	@Override
@@ -121,6 +141,7 @@ public class MediaTaskManager implements MediaTaskListener
 		{
 			Thread h = new Thread(mediaTask);
 			h.start();
+			this.taskWorking++;
 		}
 
 	}
@@ -133,16 +154,19 @@ public class MediaTaskManager implements MediaTaskListener
 		notifyAll();
 	}
 
-	protected synchronized boolean isCanceled(AbstractMediaTask mediaTask) 
+	protected synchronized boolean isCanceled(AbstractMediaTask mediaTask)
 	{
 		return this.mediaTasksCanceled.contains(mediaTask);
 	}
-	
+
 	public synchronized void addTask(AbstractMediaTask abstractMediaTask)
 	{
-
 		this.mediaTasksQueued.add(abstractMediaTask);
+	}
 
+	public synchronized void addFirstTask(AbstractMediaTask abstractMediaTask)
+	{
+		this.mediaTasksQueued.addFirst(abstractMediaTask);
 	}
 
 	private synchronized boolean isMyTurn(AbstractMediaTask abstractMediaTask)
@@ -155,8 +179,8 @@ public class MediaTaskManager implements MediaTaskListener
 	@Override
 	public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
 	{
-	    for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
-		mediaTaskListener.updatePercentageCompleted(abstractMediaTask);
+		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
+			mediaTaskListener.updatePercentageCompleted(abstractMediaTask);
 	}
 
 }

@@ -2,45 +2,35 @@ package controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Arrays;
-
-import javax.swing.JFileChooser;
+import java.util.ArrayList;
 
 import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
-import core.ImageProcessor;
-import vista.IVista;
-import vista.Ventana;
+import core.AbstractMediaTask;
+import core.ConsoleMediaTaskListener;
+import core.MediaTaskListener;
+import core.MediaTaskManager;
+import core.TaskFactory;
+import core.Util;
+import core.VideoAnalysisResult;
+import core.VideoTask;
 
-public class Controlador implements ActionListener
+public class Controlador implements ActionListener, MediaTaskListener
 {
+
 	private IVista vista;
-	private BufferedImage originalImage;
-	private Mat originalMat;
-	private Mat correctedMat;
+	private TaskFactory factory = new TaskFactory();
 
-	public Controlador(Mat mat)
+	public Controlador(IVista vista)
 	{
-		this.originalMat = mat;
-		this.setVista(new Ventana());
-		this.originalImage = ImageProcessor.matToBufferedImage(mat);
-		this.vista.setImage(originalImage);
+		super();
 
-	}
-
-	public IVista getVista()
-	{
-		return vista;
-	}
-
-	public void setVista(IVista vista)
-	{
 		this.vista = vista;
-		this.vista.setControlador(this);
+		vista.setControlador(this);
+		MediaTaskManager.getInstance().addMediaTaskListener(this);
+		ConsoleMediaTaskListener cpl = new ConsoleMediaTaskListener();
+		MediaTaskManager.getInstance().addMediaTaskListener(cpl);
 	}
 
 	@Override
@@ -48,55 +38,62 @@ public class Controlador implements ActionListener
 	{
 		switch (e.getActionCommand())
 		{
-		case IVista.PROCESAR:
-		{
-			this.procesar();
+		case IVista.START_TASK:
+			MediaTaskManager.getInstance().startTask();
 			break;
-		}
-		case IVista.GUARDAR:
-		{
-			this.guardar();
-			break;
-		}
-		case IVista.ARCHIVOS:
-		{
-			this.archivos();
-			break;
-		}
+
 		}
 
 	}
 
-	private void guardar()
+	@Override
+	public void videoAnalized(VideoTask videoTask, VideoAnalysisResult videoAnalysisResult)
 	{
-		Mat bgr = new Mat();
-		Imgproc.cvtColor(originalMat, bgr, Imgproc.COLOR_RGB2BGR);
-		Imgcodecs.imwrite("salida.jpg", bgr);
+		// TODO Auto-generated method stub
 
 	}
 
-	private void procesar()
+	@Override
+	public void frameProcessed(VideoTask videoTask, Mat frame, int frameIndex)
 	{
-		double[] filtros = ImageProcessor.getFilterMatrix(originalMat);
-		this.vista.updateLog(Arrays.toString(filtros));
-		this.correctedMat = ImageProcessor.correct(originalMat);
-		this.vista.setImage(ImageProcessor.matToBufferedImage(this.correctedMat));
-		Mat bgr = new Mat();
-		Imgproc.cvtColor(this.correctedMat, bgr, Imgproc.COLOR_RGB2BGR);
-		Imgcodecs.imwrite("salida.jpg", bgr);
+		// TODO Auto-generated method stub
 
 	}
 
-	private void archivos()
+	@Override
+	public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
 	{
-		JFileChooser jfc = new JFileChooser();
-		jfc.setMultiSelectionEnabled(true);
-		int response = jfc.showOpenDialog(null);
-		if (response == JFileChooser.APPROVE_OPTION)
-		{
-			File[] selectedFiles = jfc.getSelectedFiles();
-			this.vista.addFiles(selectedFiles);
-		}
+		this.vista.updateTaskVisualization();
+
+	}
+
+	@Override
+	public void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mediaCorrectInitiated(AbstractMediaTask abstractMediaTask)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void exceptionThrowed(Exception e)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void addFiles(File[] selectedFiles)
+	{
+		ArrayList<AbstractMediaTask> mediaTasks = this.factory.getTasks(selectedFiles);
+		for (AbstractMediaTask task : mediaTasks)
+			MediaTaskManager.getInstance().addTask(task);
+		this.vista.addTasks(mediaTasks);
 	}
 
 }

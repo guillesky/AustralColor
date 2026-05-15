@@ -12,7 +12,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -21,7 +20,6 @@ import core.AbstractMediaTask;
 import core.ConsoleMediaTaskListener;
 import core.MediaTaskListener;
 import core.MediaTaskManager;
-import core.Util;
 import core.VideoAnalysisResult;
 import core.VideoTask;
 
@@ -77,7 +75,7 @@ public class VideoBatchUI implements MediaTaskListener
 
 		frame.setVisible(true);
 
-		this.mediaTaskManager = new MediaTaskManager();
+		this.mediaTaskManager = MediaTaskManager.getInstance();
 		ConsoleMediaTaskListener cpl = new ConsoleMediaTaskListener();
 
 		mediaTaskManager.addMediaTaskListener(cpl);
@@ -104,10 +102,9 @@ public class VideoBatchUI implements MediaTaskListener
 			for (File f : chooser.getSelectedFiles())
 			{
 
-				VideoTask vt = new VideoTask(f.getAbsolutePath(), f.getAbsolutePath() + ".corrected.mp4",
-						mediaTaskManager);
+				VideoTask vt = new VideoTask(f.getAbsolutePath(), f.getAbsolutePath() + ".corrected.mp4");
 				mediaTaskManager.addTask(vt);
-				modelo.addVideo(vt);
+				modelo.addAbstractMediaTask(vt);
 			}
 		}
 	}

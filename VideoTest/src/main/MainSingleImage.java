@@ -7,7 +7,7 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-import controlador.Controlador;
+import controlador.ControladorOLD;
 
 public class MainSingleImage
 {
@@ -19,7 +19,7 @@ public class MainSingleImage
 		Mat mat = Imgcodecs.imread(input);
 		Mat rgb = new Mat();
 		Imgproc.cvtColor(mat, rgb, Imgproc.COLOR_BGR2RGB);
-		Controlador controlador = new Controlador(rgb);
+		ControladorOLD controlador = new ControladorOLD(rgb);
 		
 		/*
 		 * try { BufferedImage image = ImageIO.read(new File(input)); Controlador

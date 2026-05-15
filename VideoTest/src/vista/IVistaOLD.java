@@ -3,9 +3,9 @@ package vista;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import controlador.Controlador;
+import controlador.ControladorOLD;
 
-public interface IVista
+public interface IVistaOLD
 {
 
 	final String PROCESAR = "PROCESAR";
@@ -14,7 +14,7 @@ public interface IVista
 
 	void setImage(BufferedImage bufferedImage);
 
-	void setControlador(Controlador controlador);
+	void setControlador(ControladorOLD controlador);
 
 	void updateLog(String string);
 

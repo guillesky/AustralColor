@@ -10,9 +10,9 @@ import org.opencv.videoio.Videoio;
 
 public class VideoTask extends AbstractMediaTask
 {
-	public VideoTask(String inputPath, String outputPath, MediaTaskManager mediaTaskManager)
+	public VideoTask(String inputPath, String outputPath)
 	{
-		super(inputPath, outputPath, mediaTaskManager);
+		super(inputPath, outputPath);
 
 	}
 
@@ -54,7 +54,7 @@ public class VideoTask extends AbstractMediaTask
 		}
 
 		cap.release();
-		this.mediaTaskManager.videoAnalized(this, this.videoAnalysisResult);
+		MediaTaskManager.getInstance().videoAnalized(this, this.videoAnalysisResult);
 
 	}
 
@@ -119,12 +119,12 @@ public class VideoTask extends AbstractMediaTask
 
 				// enviar a FFmpeg
 				ffmpegInput.write(data);
-				this.mediaTaskManager.frameProcessed(this, frame, frameCount);
+				MediaTaskManager.getInstance().frameProcessed(this, frame, frameCount);
 				double p=(double)frameCount*100/(double)this.totalFrameCount;
 				if((int)p!=this.percentageCompleted)
 				{
 				    this.percentageCompleted=(int) p;
-				    this.mediaTaskManager.updatePercentageCompleted(this);
+				    MediaTaskManager.getInstance().updatePercentageCompleted(this);
 				}
 				frame.release();
 

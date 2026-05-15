@@ -4,13 +4,23 @@ public abstract class AbstractMediaTask implements Runnable
 {
 	private String inputPath;
 	private String outputPath;
-	protected MediaTaskManager mediaTaskManager;
+	
 	protected int percentageCompleted=0;
 	private String status;
 	
 	
 	
 	
+
+	public void setOutputPath(String outputPath)
+	{
+		this.outputPath = outputPath;
+	}
+
+
+
+
+
 
 	public String getStatus()
 	{
@@ -22,12 +32,12 @@ public abstract class AbstractMediaTask implements Runnable
 
 
 
-	public AbstractMediaTask(String inputPath,String outputPath,MediaTaskManager mediaTaskManager)
+	public AbstractMediaTask(String inputPath,String outputPath)
 	{
 		super();
 		this.inputPath = inputPath;
 		this.outputPath = outputPath;
-		this.mediaTaskManager=mediaTaskManager;
+	
 	}
 
 	
@@ -38,15 +48,15 @@ public abstract class AbstractMediaTask implements Runnable
 	@Override
 	public void run()
 	{
-	   this.mediaTaskManager.getResource(this);
-	   this.mediaTaskManager.mediaCorrectInitiated(this);
+		MediaTaskManager.getInstance().getResource(this);
+		MediaTaskManager.getInstance().mediaCorrectInitiated(this);
 	   double elpasedTime=this.processMedia();
 	   
 	   this.percentageCompleted=100;
-	   this.mediaTaskManager.updatePercentageCompleted(this);
-	   this.mediaTaskManager.mediaCorrectCompleted(this, elpasedTime);
+	   MediaTaskManager.getInstance().updatePercentageCompleted(this);
+	   MediaTaskManager.getInstance().mediaCorrectCompleted(this, elpasedTime);
 		  
-	   this.mediaTaskManager.releaseResource(this);
+	   MediaTaskManager.getInstance().releaseResource(this);
 	}
 	
 	

@@ -19,9 +19,9 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import controlador.Controlador;
+import controlador.ControladorOLD;
 
-public class Ventana extends JFrame implements IVista
+public class VentanaOLD extends JFrame implements IVistaOLD
 {
 
 	private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class Ventana extends JFrame implements IVista
 	/**
 	 * Create the frame.
 	 */
-	public Ventana()
+	public VentanaOLD()
 	{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -73,7 +73,7 @@ public class Ventana extends JFrame implements IVista
 		panelBotones.add(panel_2);
 
 		btnArchivos = new JButton("Seleccion Archivos");
-		btnArchivos.setActionCommand(IVista.ARCHIVOS);
+		btnArchivos.setActionCommand(IVistaOLD.ARCHIVOS);
 		panel_2.add(btnArchivos);
 
 		panel_1 = new JPanel();
@@ -81,14 +81,14 @@ public class Ventana extends JFrame implements IVista
 
 		btnProcesar = new JButton("Procesar");
 		panel_1.add(btnProcesar);
-		this.btnProcesar.setActionCommand(IVista.PROCESAR);
+		this.btnProcesar.setActionCommand(IVistaOLD.PROCESAR);
 
 		panel = new JPanel();
 		panelBotones.add(panel);
 
 		btnGuardar = new JButton("Guardar");
 		panel.add(btnGuardar);
-		btnGuardar.setActionCommand(IVista.GUARDAR);
+		btnGuardar.setActionCommand(IVistaOLD.GUARDAR);
 		
 		scrollPane = new JScrollPane();
 		panelWest.add(scrollPane);
@@ -116,7 +116,7 @@ public class Ventana extends JFrame implements IVista
 	}
 
 	@Override
-	public void setControlador(Controlador controlador)
+	public void setControlador(ControladorOLD controlador)
 	{
 		this.btnProcesar.addActionListener(controlador);
 		this.btnGuardar.addActionListener(controlador);

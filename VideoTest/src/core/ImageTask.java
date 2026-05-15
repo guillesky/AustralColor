@@ -9,9 +9,9 @@ import org.opencv.imgproc.Imgproc;
 public class ImageTask extends AbstractMediaTask
 {
 
-	public ImageTask(String inputPath, String outputPath, MediaTaskManager mediaTaskManager)
+	public ImageTask(String inputPath, String outputPath)
 	{
-		super(inputPath, outputPath, mediaTaskManager);
+		super(inputPath, outputPath);
 
 	}
 
