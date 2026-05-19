@@ -7,97 +7,98 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import core.Util;
+import i18n.Messages;
 
 public class MediaFileChooser extends JFileChooser
 {
 
-    public MediaFileChooser()
-    {
-	super();
-	this.initFilters();
-    }
-
-    public MediaFileChooser(File currentDirectory, FileSystemView fsv)
-    {
-	super(currentDirectory, fsv);
-	this.initFilters();
-    }
-
-    public MediaFileChooser(File currentDirectory)
-    {
-	super(currentDirectory);
-	this.initFilters();
-    }
-
-    public MediaFileChooser(FileSystemView fsv)
-    {
-	super(fsv);
-	this.initFilters();
-    }
-
-    public MediaFileChooser(String currentDirectoryPath, FileSystemView fsv)
-    {
-	super(currentDirectoryPath, fsv);
-	this.initFilters();
-    }
-
-    public MediaFileChooser(String currentDirectoryPath)
-    {
-	super(currentDirectoryPath);
-	this.initFilters();
-    }
-
-    private void initFilters()
-    {
-	FileFilter imageFilter = new FileFilter()
+	public MediaFileChooser()
 	{
-	    @Override
-	    public boolean accept(File f)
-	    {
-		return (f.isDirectory() || Util.getTypeExtension(f) == Util.TYPE_IMAGE);
-	    }
+		super();
+		this.initFilters();
+	}
 
-	    @Override
-	    public String getDescription()
-	    {
-		return "Image files";
-	    }
-	};
-	FileFilter videoFilter = new FileFilter()
+	public MediaFileChooser(File currentDirectory, FileSystemView fsv)
 	{
-	    @Override
-	    public boolean accept(File f)
-	    {
-		return (f.isDirectory() || Util.getTypeExtension(f) == Util.TYPE_VIDEO);
-	    }
+		super(currentDirectory, fsv);
+		this.initFilters();
+	}
 
-	    @Override
-	    public String getDescription()
-	    {
-		return "Video files";
-	    }
-	};
-
-	FileFilter mediaFilter = new FileFilter()
+	public MediaFileChooser(File currentDirectory)
 	{
-	    @Override
-	    public boolean accept(File f)
-	    {
-		return (f.isDirectory() || Util.getTypeExtension(f) == Util.TYPE_IMAGE
-			|| Util.getTypeExtension(f) == Util.TYPE_VIDEO);
-	    }
+		super(currentDirectory);
+		this.initFilters();
+	}
 
-	    @Override
-	    public String getDescription()
-	    {
-		return "Image and Video files";
-	    }
-	};
-	this.setMultiSelectionEnabled(true);
+	public MediaFileChooser(FileSystemView fsv)
+	{
+		super(fsv);
+		this.initFilters();
+	}
 
-	this.addChoosableFileFilter(imageFilter);
-	this.addChoosableFileFilter(videoFilter);
-	this.addChoosableFileFilter(mediaFilter);
-	this.setFileFilter(mediaFilter);
-    }
+	public MediaFileChooser(String currentDirectoryPath, FileSystemView fsv)
+	{
+		super(currentDirectoryPath, fsv);
+		this.initFilters();
+	}
+
+	public MediaFileChooser(String currentDirectoryPath)
+	{
+		super(currentDirectoryPath);
+		this.initFilters();
+	}
+
+	private void initFilters()
+	{
+		FileFilter imageFilter = new FileFilter()
+		{
+			@Override
+			public boolean accept(File f)
+			{
+				return (f.isDirectory() || Util.getTypeExtension(f) == Util.TYPE_IMAGE);
+			}
+
+			@Override
+			public String getDescription()
+			{
+				return Messages.IMAGE_FILES.getValue();
+			}
+		};
+		FileFilter videoFilter = new FileFilter()
+		{
+			@Override
+			public boolean accept(File f)
+			{
+				return (f.isDirectory() || Util.getTypeExtension(f) == Util.TYPE_VIDEO);
+			}
+
+			@Override
+			public String getDescription()
+			{
+				return Messages.VIDEO_FILES.getValue();
+			}
+		};
+
+		FileFilter mediaFilter = new FileFilter()
+		{
+			@Override
+			public boolean accept(File f)
+			{
+				return (f.isDirectory() || Util.getTypeExtension(f) == Util.TYPE_IMAGE
+						|| Util.getTypeExtension(f) == Util.TYPE_VIDEO);
+			}
+
+			@Override
+			public String getDescription()
+			{
+				return Messages.MEDIA_FILES.getValue();
+			}
+		};
+		this.setMultiSelectionEnabled(true);
+
+		this.addChoosableFileFilter(imageFilter);
+		this.addChoosableFileFilter(videoFilter);
+		this.addChoosableFileFilter(mediaFilter);
+		this.setFileFilter(mediaFilter);
+	}
 }

@@ -1,67 +1,59 @@
 package core;
 
+import java.io.File;
+
+import i18n.Messages;
+
 public abstract class AbstractMediaTask implements Runnable
 {
 	private String inputPath;
 	private String outputPath;
-	
-	protected int percentageCompleted=0;
-	private String status;
-	
-	
-	
-	
+	private String inputFileName;
+
+	protected int percentageCompleted = 0;
+	protected String status;
 
 	public void setOutputPath(String outputPath)
 	{
 		this.outputPath = outputPath;
 	}
 
-
-
-
-
-
 	public String getStatus()
 	{
-	    return status;
+		return status;
 	}
 
-
-
-
-
-
-	public AbstractMediaTask(String inputPath,String outputPath)
+	public AbstractMediaTask(File file,String outputPath)
 	{
 		super();
-		this.inputPath = inputPath;
+		this.status = Messages.QUEUED.getValue();
+		this.inputPath = file.getAbsolutePath();
+		this.inputFileName=file.getName();
+		
 		this.outputPath = outputPath;
-	
 	}
 
-	
-
-
-
-	
 	@Override
 	public void run()
 	{
-		MediaTaskManager.getInstance().getResource(this);
+		
+
 		MediaTaskManager.getInstance().mediaCorrectInitiated(this);
-	   double elpasedTime=this.processMedia();
-	   
-	   this.percentageCompleted=100;
-	   MediaTaskManager.getInstance().updatePercentageCompleted(this);
-	   MediaTaskManager.getInstance().mediaCorrectCompleted(this, elpasedTime);
-		  
-	   MediaTaskManager.getInstance().releaseResource(this);
+		double elpasedTime = this.processMedia();
+
+		
+		
+		MediaTaskManager.getInstance().releaseResource(this);
+		if (this.status == Messages.PROCESSING.getValue())
+			this.status = Messages.COMPLETED.getValue();
+		
+		MediaTaskManager.getInstance().updatePercentageCompleted(this);
+		MediaTaskManager.getInstance().mediaCorrectCompleted(this, elpasedTime);
+
 	}
-	
-	
 
 	protected abstract double processMedia();
+
 	public String getInputPath()
 	{
 		return inputPath;
@@ -72,14 +64,15 @@ public abstract class AbstractMediaTask implements Runnable
 		return outputPath;
 	}
 
-
-
-
-
-
 	public int getPercentageCompleted()
 	{
-	    return percentageCompleted;
+		return percentageCompleted;
+	}
+
+	public String getInputFileName()
+	{
+		return inputFileName;
 	}
 	
+
 }

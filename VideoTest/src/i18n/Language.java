@@ -4,11 +4,7 @@ import java.util.HashMap;
 
 
 
-/**
- * Clase que representa un idioma durante el juego
- * 
- * @author Guillermo Lazzurri
- */
+
 public class Language
 {
     private String fileCode;
@@ -55,7 +51,7 @@ public class Language
     public static Language getLanguage()
     {
 	Language language = new Language();
-	language.fileCode="en";
+	language.fileCode="es";
 	for (Messages key : Messages.values())
 	{
 	    language.words.put(key.name(), key.getValue());

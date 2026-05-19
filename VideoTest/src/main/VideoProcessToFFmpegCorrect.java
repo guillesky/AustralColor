@@ -23,7 +23,7 @@ public class VideoProcessToFFmpegCorrect
 	mediaTaskManager.addMediaTaskListener(cpl);
 	
 	
-	
+	/*
 	VideoTask vp1 = new VideoTask("C:\\Users\\Guille\\git\\ColorDiveCorrector\\VideoTest\\pezLeon.mp4","C:\\Users\\Guille\\git\\ColorDiveCorrector\\VideoTest\\pezLeon.mp4.corrected.mp4");
 	
 
@@ -34,7 +34,7 @@ public class VideoProcessToFFmpegCorrect
 	mediaTaskManager.addTask(vp2);
 	mediaTaskManager.addTask(it1);
 	
-	mediaTaskManager.startTask();
-	
+//	mediaTaskManager.startTask();
+	*/
     }
 }

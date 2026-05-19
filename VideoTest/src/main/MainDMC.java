@@ -7,6 +7,7 @@ import javax.swing.UIManager;
 import org.opencv.core.Core;
 
 import controlador.Controlador;
+import core.Environment;
 import vista_Progress.Ventana;
 
 public class MainDMC
@@ -26,6 +27,7 @@ public class MainDMC
 	    {
 	        e.printStackTrace();
 	    }
+	Environment.getInstance();
 		
 		EventQueue.invokeLater(new Runnable()
 		{

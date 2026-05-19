@@ -16,21 +16,24 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	@Override
 	public void frameProcessed(VideoTask videoTask, Mat frame, int frameIndex)
 	{
-		//System.out.println(videoTask.getInputPath() + " Frame procesada:" + frameIndex);
+		// System.out.println(videoTask.getInputPath() + " Frame procesada:" +
+		// frameIndex);
 
 	}
 
 	@Override
 	public void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs)
 	{
-		System.out.println(abstractMediaTask.getInputPath() + " Correccion completa - Tiempo total: " + elapsedMs+"\n**************************************************");
-		
+		System.out.println(abstractMediaTask.getInputPath() + " Correccion completa - Tiempo total: " + elapsedMs
+				+ "\n**************************************************");
+
 	}
 
 	@Override
 	public void mediaCorrectInitiated(AbstractMediaTask abstractMediaTask)
 	{
-		System.out.println(abstractMediaTask + "  Correccion iniciada \n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println(abstractMediaTask
+				+ "  Correccion iniciada \n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 	}
 
@@ -38,16 +41,28 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	public void exceptionThrowed(Exception e)
 	{
 		System.out.println(e.getMessage());
-		
+
 	}
 
 	@Override
 	public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
 	{
-		System.out.println(abstractMediaTask.getInputPath() + " Porcentage: " + abstractMediaTask.getPercentageCompleted());
- 
+		System.out.println(
+				abstractMediaTask.getInputPath() + " Porcentage: " + abstractMediaTask.getPercentageCompleted());
+
 	}
-	
-	
+
+	@Override
+	public void allTaskFinished(double elapsedMs)
+	{
+		System.out.println("Todos los procesos terminaron "+elapsedMs);
+	}
+
+	@Override
+	public void videoTaskCanceled(AbstractMediaTask abstractMediaTask)
+	{
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" + abstractMediaTask.getInputPath()
+				+ "\n CANCELADO\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	}
 
 }

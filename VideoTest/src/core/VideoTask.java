@@ -1,5 +1,6 @@
 package core;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -8,11 +9,13 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
+import i18n.Messages;
+
 public class VideoTask extends AbstractMediaTask
 {
-	public VideoTask(String inputPath, String outputPath)
+	public VideoTask(File file, String outputPath)
 	{
-		super(inputPath, outputPath);
+		super(file, outputPath);
 
 	}
 
@@ -26,7 +29,6 @@ public class VideoTask extends AbstractMediaTask
 	{
 		VideoCapture cap = new VideoCapture(this.getInputPath());
 
-		
 		this.fps = (int) cap.get(Videoio.CAP_PROP_FPS);
 		this.totalFrameCount = (int) cap.get(Videoio.CAP_PROP_FRAME_COUNT);
 		int count = 0;
@@ -63,7 +65,9 @@ public class VideoTask extends AbstractMediaTask
 	{
 		double elapsedMs = 0;
 		long start = System.nanoTime();
+		this.status = Messages.ANALIZING.getValue();
 		this.analyzeVideo();
+		this.status = Messages.PROCESSING.getValue();
 		VideoCapture cap = new VideoCapture(this.getInputPath());
 		int width = (int) cap.get(Videoio.CAP_PROP_FRAME_WIDTH);
 		int height = (int) cap.get(Videoio.CAP_PROP_FRAME_HEIGHT);
@@ -90,7 +94,7 @@ public class VideoTask extends AbstractMediaTask
 
 				// ===== OUTPUT =====
 				this.getOutputPath());
-		//File logFile = new File("proceso.log");
+		// File logFile = new File("proceso.log");
 		pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
 		pb.redirectError(ProcessBuilder.Redirect.DISCARD);
 
@@ -103,7 +107,7 @@ public class VideoTask extends AbstractMediaTask
 			Mat frame = new Mat();
 			int frameCount = 0;
 
-			while (cap.read(frame))
+			while (cap.read(frame) && !MediaTaskManager.getInstance().wasCanceled(this))
 			{
 
 				// ===== PROCESAMIENTO: CORREGIR =====
@@ -120,11 +124,11 @@ public class VideoTask extends AbstractMediaTask
 				// enviar a FFmpeg
 				ffmpegInput.write(data);
 				MediaTaskManager.getInstance().frameProcessed(this, frame, frameCount);
-				double p=(double)frameCount*100/(double)this.totalFrameCount;
-				if((int)p!=this.percentageCompleted)
+				double p = (double) frameCount * 100 / (double) this.totalFrameCount;
+				if ((int) p != this.percentageCompleted)
 				{
-				    this.percentageCompleted=(int) p;
-				    MediaTaskManager.getInstance().updatePercentageCompleted(this);
+					this.percentageCompleted = (int) p;
+					MediaTaskManager.getInstance().updatePercentageCompleted(this);
 				}
 				frame.release();
 
@@ -134,18 +138,24 @@ public class VideoTask extends AbstractMediaTask
 			ffmpegInput.close();
 			cap.release();
 
-			int exitCode = process.waitFor();
+			if (MediaTaskManager.getInstance().wasCanceled(this))
+			{
+				this.status = Messages.CANCELED.getValue();
+				MediaTaskManager.getInstance().videoTaskCanceled(this);
+
+			} else
+				this.percentageCompleted = 100;
+			process.waitFor();
 
 			long end = System.nanoTime();
 
 			elapsedMs = (end - start) / 1_000_000.0;
-
-			System.out.println("FFmpeg exit code: " + exitCode);
-
+			if (MediaTaskManager.getInstance().wasCanceled(this))
+				this.renameCanceledFile();
 		} catch (IOException | InterruptedException e)
 		{
-			
-			e.printStackTrace();
+			MediaTaskManager.getInstance().exceptionThrowed(e);
+
 		}
 		return elapsedMs;
 	}
@@ -153,8 +163,16 @@ public class VideoTask extends AbstractMediaTask
 	@Override
 	public String toString()
 	{
-		return "VideoProcessor [inputPath=" + this.getInputPath() + ", outputPath=" + this.getOutputPath() + ", fps="
-				+ fps + ", frameCount=" + totalFrameCount + "]";
+		return "VideoProcessor [inputPath=" + this.getInputPath() + ", fps=" + fps + ", frameCount=" + totalFrameCount
+				+ "]";
 	}
 
+	private void renameCanceledFile()
+	{
+		File source = new File(this.getOutputPath());
+
+		File target = new File(this.getOutputPath() + "_CANCELADO");
+
+		source.renameTo(target);
+	}
 }

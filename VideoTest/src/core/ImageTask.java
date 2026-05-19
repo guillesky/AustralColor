@@ -1,25 +1,29 @@
 package core;
 
-import java.util.Arrays;
+import java.io.File;
 
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import i18n.Messages;
+
 public class ImageTask extends AbstractMediaTask
 {
 
-	public ImageTask(String inputPath, String outputPath)
+	public ImageTask(File file,String outputPath)
 	{
-		super(inputPath, outputPath);
+		super(file,outputPath);
 
 	}
 
 	@Override
 	protected double processMedia()
 	{
+		
 		long start = System.nanoTime();
 		double elapsedMs = 0;
+		this.status = Messages.PROCESSING.getValue();
 		Mat mat = Imgcodecs.imread(this.getInputPath());
 
 		Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2RGB);
@@ -31,12 +35,13 @@ public class ImageTask extends AbstractMediaTask
 		correctedMat.release();
 		long end = System.nanoTime();
 		elapsedMs = (end - start) / 1_000_000.0;
+		this.percentageCompleted = 100;
 		return elapsedMs;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "ImageProcessor: inputPath=" + this.getInputPath() + ", outputPath=" + this.getOutputPath();
+		return "ImageProcessor: inputPath=" + this.getInputPath();
 	}
 }

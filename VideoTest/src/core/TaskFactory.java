@@ -3,36 +3,34 @@ package core;
 import java.io.File;
 import java.util.ArrayList;
 
+import i18n.Messages;
+
 public class TaskFactory
 {
-	private String outputDirectory;
-	private String sufix;
+	
 
 	public TaskFactory()
 	{
-		File currentDir = new File(System.getProperty("user.dir"));
-		String sufix = "_corrected";
-		this(currentDir.getAbsolutePath() + File.separator + "output", sufix);
-	}
-
-	public TaskFactory(String outputDirectory, String sufix)
-	{
-		this.outputDirectory = outputDirectory;
-		this.sufix = sufix;
+		
 	}
 
 	public AbstractMediaTask getAbstractMediaTask(File f)
 	{
 		AbstractMediaTask result = null;
+		String outputFile = Environment.getInstance().getOutputPath() + File.separator + f.getName() + "_" + Messages.CORRECTED.getValue();
 		int type = Util.getTypeExtension(f);
-		String outputFileName = outputDirectory + File.separator + Util.getNameAndExtension(f)[0] + this.sufix;
 		switch (type)
 		{
 		case Util.TYPE_IMAGE:
-			result = new ImageTask(f.getAbsolutePath(), outputFileName + ".jpg");
+		{
 
+			result = new ImageTask(f, outputFile + ".jpg");
+			break;
+		}
 		case Util.TYPE_VIDEO:
-			result = new VideoTask(f.getAbsolutePath(), outputFileName + ".mp4");
+
+			result = new VideoTask(f, outputFile + ".mp4");
+			break;
 
 		}
 
@@ -44,18 +42,19 @@ public class TaskFactory
 		ArrayList<AbstractMediaTask> result = new ArrayList<AbstractMediaTask>();
 		ArrayList<AbstractMediaTask> imageTasks = new ArrayList<AbstractMediaTask>();
 		ArrayList<AbstractMediaTask> videoTasks = new ArrayList<AbstractMediaTask>();
+		
 		for (File f : files)
 		{
-
+			String outputFile = Environment.getInstance().getOutputPath() + File.separator + f.getName() + "_" + Messages.CORRECTED.getValue();
+			
 			int type = Util.getTypeExtension(f);
-			String outputFileName = outputDirectory + File.separator + Util.getNameAndExtension(f)[0] + this.sufix;
 			switch (type)
 			{
 			case Util.TYPE_IMAGE:
-				imageTasks.add(new ImageTask(f.getAbsolutePath(), outputFileName + ".jpg"));
+				imageTasks.add(new ImageTask(f,outputFile+ ".jpg"));
 				break;
 			case Util.TYPE_VIDEO:
-				videoTasks.add(new VideoTask(f.getAbsolutePath(), outputFileName + ".mp4"));
+				videoTasks.add(new VideoTask(f,outputFile+ ".mp4"));
 				break;
 			}
 		}

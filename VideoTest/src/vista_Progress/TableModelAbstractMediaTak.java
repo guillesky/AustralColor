@@ -69,7 +69,7 @@ class TableModelAbstractMediaTak extends AbstractTableModel
 		switch (col)
 		{
 		case 0:
-			result = abstractMediaTask.getInputPath();
+			result = abstractMediaTask.getInputFileName();
 			break;
 		case 1:
 			result = abstractMediaTask.getPercentageCompleted();
@@ -83,14 +83,18 @@ class TableModelAbstractMediaTak extends AbstractTableModel
 		return result;
 	}
 
-	public Class<?> getColumnClass(int col)
+	/*
+	 * public Class<?> getColumnClass(int col) { Class<?> result; if (col == 1)
+	 * result = Integer.class; else result = String.class; return result; }
+	 */
+	protected AbstractMediaTask getAbstractMediaTask(int row)
 	{
-		Class<?> result;
-		if (col == 1)
-			result = Integer.class;
-		else
-			result = String.class;
-		return result;
+		return this.lista.get(row);
+	}
+
+	protected int getRowOf(AbstractMediaTask abstractMediaTask)
+	{
+		return this.lista.indexOf(abstractMediaTask);
 	}
 
 }

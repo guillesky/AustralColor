@@ -25,10 +25,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
+
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
 
-public class Ventana extends JFrame implements IVista, ActionListener {
+public class Ventana extends JFrame implements IVista, ActionListener
+{
 
 	private static final long serialVersionUID = 1L;
 	private Controlador controlador;
@@ -64,10 +66,16 @@ public class Ventana extends JFrame implements IVista, ActionListener {
 	private JButton btnCancelar;
 	private JPanel panel_5;
 	private JButton btnDetener;
+	private JPanel panel_North;
+	private JLabel lblOutputDirectoryLabel;
+	private JLabel lblNewLabel_1;
+	private JPanel panel_6;
+	private JButton btnChangeDirectory;
 
-	public Ventana() {
+	public Ventana()
+	{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 911, 300);
+		setBounds(100, 100, 911, 600);
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
@@ -112,10 +120,10 @@ public class Ventana extends JFrame implements IVista, ActionListener {
 		this.panel_2.add(this.btnAgregar);
 		this.btnAgregar.addActionListener(this);
 		this.btnAgregar.setActionCommand(IVista.ADD_FILES);
-		
+
 		panel_1 = new JPanel();
 		panel_botones.add(panel_1);
-		
+
 		btnEliminar = new JButton("Eliminar");
 		btnEliminar.setActionCommand((String) null);
 		panel_1.add(btnEliminar);
@@ -125,18 +133,17 @@ public class Ventana extends JFrame implements IVista, ActionListener {
 
 		this.btnProcesar = new JButton("Procesar");
 		this.panel_3.add(this.btnProcesar);
-		this.btnProcesar.setActionCommand(IVista.START_TASK);
-		
+
 		panel_4 = new JPanel();
 		panel_botones.add(panel_4);
-		
+
 		btnCancelar = new JButton("Cancelar\n");
 		btnCancelar.setActionCommand((String) null);
 		panel_4.add(btnCancelar);
-		
+
 		panel_5 = new JPanel();
 		panel_botones.add(panel_5);
-		
+
 		btnDetener = new JButton("Detener\n");
 		btnDetener.setActionCommand((String) null);
 		panel_5.add(btnDetener);
@@ -175,55 +182,91 @@ public class Ventana extends JFrame implements IVista, ActionListener {
 		this.group.add(this.rdbtnNewRenombrar);
 		this.group.add(this.rdbtnSobreescribir);
 
+		panel_6 = new JPanel();
+		panel_opciones.add(panel_6);
+
+		btnChangeDirectory = new JButton("Cambiar Carpeta Destino");
+		panel_6.add(btnChangeDirectory);
+		this.btnProcesar.setActionCommand(IVista.START_TASK);
+		this.btnDetener.setActionCommand(IVista.STOP_ALL);
+		this.btnCancelar.setActionCommand(IVista.CANCEL_TASK);
+		this.btnEliminar.setActionCommand(IVista.DELETE_TASK);
+		this.btnChangeDirectory.setActionCommand(IVista.CHANGE_OUTPUT);
+		this.btnChangeDirectory.addActionListener(this);
+		panel_North = new JPanel();
+		contentPane.add(panel_North, BorderLayout.NORTH);
+
+		lblOutputDirectoryLabel = new JLabel("Ouput Directory:");
+		panel_North.add(lblOutputDirectoryLabel);
+
+		lblNewLabel_1 = new JLabel("New label");
+		panel_North.add(lblNewLabel_1);
+		this.checkEnableButtons();
 		this.setVisible(true);
 
 	}
 
+	private void checkEnableButtons()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 	@Override
-	public void setControlador(Controlador controlador) {
+	public void setControlador(Controlador controlador)
+	{
 		this.controlador = controlador;
 		this.btnProcesar.addActionListener(controlador);
 
 	}
 
-	private void agregarArchivos() {
-		if (this.mediaFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+	private void agregarArchivos()
+	{
+		if (this.mediaFileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		{
 			this.controlador.addFiles(mediaFileChooser.getSelectedFiles());
 
 		}
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e)
+	{
 
 		this.agregarArchivos();
 
 	}
 
 	@Override
-	public void updateTaskVisualization() {
-		SwingUtilities.invokeLater(new Runnable() {
+	public void updateTaskVisualization()
+	{
+		SwingUtilities.invokeLater(new Runnable()
+		{
 			@Override
-			public void run() {
+			public void run()
+			{
 				modelo.fireTableDataChanged();
 			}
 		});
 	}
 
 	@Override
-	public void addTasks(ArrayList<AbstractMediaTask> abstractMediaTasks) {
+	public void addTasks(ArrayList<AbstractMediaTask> abstractMediaTasks)
+	{
 		for (AbstractMediaTask m : abstractMediaTasks)
 			this.modelo.addAbstractMediaTask(m);
 
 	}
 
 	@Override
-	public void removeTasks(AbstractMediaTask abstractMediaTask) {
+	public void removeTasks(AbstractMediaTask abstractMediaTask)
+	{
 		this.modelo.removeAbstractMediaTask(abstractMediaTask);
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		Ventana v = new Ventana();
 	}
 }

@@ -3,7 +3,9 @@ package i18n;
 public enum Messages
 {
 	ACCEPT("Aceptar"), CANCEL("Cancelar"), EXIT("Salir"), FILE("Archivo"), STATUS("Estado"), COMPLETED("Completo"),
-	ADD_FILES("Agregar Archivos"),DELETE("Eliminar"), STOP("Detener"),OPTIONS("Opciones"), OVERWRITE("Sobreescribir archivos existentes"), IGNORE("Ignorar Archivos Existentes"),RENAME("Renombrar Archivos Existentes"),PROGRESS("Progreso"),QUEUED("En Cola"),PROCESSING("Prosesando");
+	ADD_FILES("Agregar Archivos"), DELETE("Eliminar"), STOP("Detener"), OPTIONS("Opciones"),
+	OVERWRITE("Sobreescribir archivos existentes"), IGNORE("Ignorar Archivos Existentes"),
+	RENAME("Renombrar Archivos Existentes"), PROGRESS("Progreso"), QUEUED("En Cola"), PROCESSING("Prosesando");
 
 	private String value;
 
