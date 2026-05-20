@@ -10,7 +10,7 @@ public interface MediaTaskListener
 
 	void updatePercentageCompleted(AbstractMediaTask abstractMediaTask);
 
-	void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs);
+	void mediaCorrectionFinished(AbstractMediaTask abstractMediaTask, double elapsedMs);
 
 	void mediaCorrectInitiated(AbstractMediaTask abstractMediaTask);
 

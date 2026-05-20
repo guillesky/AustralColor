@@ -13,9 +13,12 @@ import i18n.Messages;
 
 public class VideoTask extends AbstractMediaTask
 {
-	public VideoTask(File file, String outputPath)
+	private String outputCanceledFileName;
+
+	public VideoTask(File file, String outputPath, String outputCanceledFileName)
 	{
 		super(file, outputPath);
+		this.outputCanceledFileName = outputCanceledFileName;
 
 	}
 
@@ -94,7 +97,6 @@ public class VideoTask extends AbstractMediaTask
 
 				// ===== OUTPUT =====
 				this.getOutputPath());
-		// File logFile = new File("proceso.log");
 		pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
 		pb.redirectError(ProcessBuilder.Redirect.DISCARD);
 
@@ -142,6 +144,7 @@ public class VideoTask extends AbstractMediaTask
 			{
 				this.status = Messages.CANCELED.getValue();
 				MediaTaskManager.getInstance().videoTaskCanceled(this);
+				this.canceled=true;
 
 			} else
 				this.percentageCompleted = 100;
@@ -157,6 +160,7 @@ public class VideoTask extends AbstractMediaTask
 			MediaTaskManager.getInstance().exceptionThrowed(e);
 
 		}
+		MediaTaskManager.getInstance().updatePercentageCompleted(this);
 		return elapsedMs;
 	}
 
@@ -171,7 +175,7 @@ public class VideoTask extends AbstractMediaTask
 	{
 		File source = new File(this.getOutputPath());
 
-		File target = new File(this.getOutputPath() + "_CANCELADO");
+		File target = new File(this.outputCanceledFileName);
 
 		source.renameTo(target);
 	}

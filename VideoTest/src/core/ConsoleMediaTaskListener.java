@@ -22,7 +22,7 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	}
 
 	@Override
-	public void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs)
+	public void mediaCorrectionFinished(AbstractMediaTask abstractMediaTask, double elapsedMs)
 	{
 		System.out.println(abstractMediaTask.getInputPath() + " Correccion completa - Tiempo total: " + elapsedMs
 				+ "\n**************************************************");

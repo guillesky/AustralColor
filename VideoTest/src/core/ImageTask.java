@@ -36,6 +36,7 @@ public class ImageTask extends AbstractMediaTask
 		long end = System.nanoTime();
 		elapsedMs = (end - start) / 1_000_000.0;
 		this.percentageCompleted = 100;
+		MediaTaskManager.getInstance().updatePercentageCompleted(this);
 		return elapsedMs;
 	}
 

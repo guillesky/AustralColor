@@ -78,10 +78,13 @@ public class Util
 	{
 		int result = Util.TYPE_UNKNOW;
 		String extension = Util.getExtension(file);
-		if (Util.IMAGE_EXTENSIONS.contains(extension))
-			result = Util.TYPE_IMAGE;
-		else if (Util.VIDEO_EXTENSIONS.contains(extension))
-			result = Util.TYPE_VIDEO;
+		if (file.exists() && file.isFile())
+		{
+			if (Util.IMAGE_EXTENSIONS.contains(extension))
+				result = Util.TYPE_IMAGE;
+			else if (Util.VIDEO_EXTENSIONS.contains(extension))
+				result = Util.TYPE_VIDEO;
+		}
 
 		return result;
 	}

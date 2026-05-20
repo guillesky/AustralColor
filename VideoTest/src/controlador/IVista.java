@@ -13,6 +13,11 @@ public interface IVista
 	public static final String STOP_ALL = "STOP_ALL";
 	public static final String CANCEL_TASK = "CANCEL_TASK";
 	public static final String CHANGE_OUTPUT = "CHANGE_OUTPUT";
+	
+	
+	public static final String IGNORE_DUPLICATED_FILES = "IGNORE_DUPLICATED_FILES";
+	public static final String RENAME_DUPLICATED_FILES = "RENAME_DUPLICATED_FILES";
+	public static final String OVERWRITE_DUPLICATED_FILES = "OVERWRITE_DUPLICATED_FILES";
 
 	void setControlador(Controlador controlador);
 
@@ -28,5 +33,6 @@ public interface IVista
 
 	void allTaskFinished(double elapsedMs);
 	public void updateLogText(String text);
+	int getDuplicateFilePolicy();
 
 }

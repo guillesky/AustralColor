@@ -11,8 +11,13 @@ import i18n.Language;
 
 public class Environment
 {
+	public static final int IGNORE_DUPLICATED_FILES = 0;
+	public static final int RENAME_DUPLICATED_FILES = 1;
+	public static final int OVERWRITE_DUPLICATED_FILES = 2;
+
 	private static Environment instance = null;
 	private String outputPath;
+	private int duplicateFilePolicy = 0;
 
 	public static Environment getInstance()
 	{
@@ -26,7 +31,7 @@ public class Environment
 		this.readLanguage("es.json");
 		File currentDir = new File(System.getProperty("user.dir"));
 		this.outputPath = currentDir.getAbsolutePath();
-		
+
 	}
 
 	private void readLanguage(String fileCode)
@@ -60,7 +65,14 @@ public class Environment
 		this.outputPath = outputPath;
 	}
 
+	public int getDuplicateFilePolicy()
+	{
+		return duplicateFilePolicy;
+	}
 
-	
-	
+	public void setDuplicateFilePolicy(int duplicateFilePolicy)
+	{
+		this.duplicateFilePolicy = duplicateFilePolicy;
+	}
+
 }

@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.opencv.core.Mat;
 
@@ -67,10 +68,10 @@ public class MediaTaskManager
 	}
 
 	
-	public void mediaCorrectCompleted(AbstractMediaTask videoTask, double elapsedMs)
+	public void mediaCorrectionFinished(AbstractMediaTask videoTask, double elapsedMs)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
-			mediaTaskListener.mediaCorrectCompleted(videoTask, elapsedMs);
+			mediaTaskListener.mediaCorrectionFinished(videoTask, elapsedMs);
 	}
 
 	
@@ -191,6 +192,18 @@ public class MediaTaskManager
 	public synchronized int getQueuedTaskCount()
 	{
 		return this.mediaTasksQueued.size();
+	}
+	
+	
+	public synchronized boolean isInQueded(String inputPath) 
+	{
+		boolean result =false;
+		Iterator<AbstractMediaTask>it=this.mediaTasksQueued.iterator();
+		while(it.hasNext()&&!result) 
+		{
+			result=it.next().getInputPath().equals(inputPath);
+		}
+		return result;
 	}
 
 }

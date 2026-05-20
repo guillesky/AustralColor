@@ -9,7 +9,7 @@ public abstract class AbstractMediaTask implements Runnable
 	private String inputPath;
 	private String outputPath;
 	private String inputFileName;
-
+	protected boolean canceled = false;
 	protected int percentageCompleted = 0;
 	protected String status;
 
@@ -23,32 +23,27 @@ public abstract class AbstractMediaTask implements Runnable
 		return status;
 	}
 
-	public AbstractMediaTask(File file,String outputPath)
+	public AbstractMediaTask(File file, String outputPath)
 	{
 		super();
 		this.status = Messages.QUEUED.getValue();
 		this.inputPath = file.getAbsolutePath();
-		this.inputFileName=file.getName();
-		
+		this.inputFileName = file.getName();
+
 		this.outputPath = outputPath;
 	}
 
 	@Override
 	public void run()
 	{
-		
 
 		MediaTaskManager.getInstance().mediaCorrectInitiated(this);
 		double elpasedTime = this.processMedia();
 
-		
-		
 		MediaTaskManager.getInstance().releaseResource(this);
 		if (this.status == Messages.PROCESSING.getValue())
 			this.status = Messages.COMPLETED.getValue();
-		
-		MediaTaskManager.getInstance().updatePercentageCompleted(this);
-		MediaTaskManager.getInstance().mediaCorrectCompleted(this, elpasedTime);
+		MediaTaskManager.getInstance().mediaCorrectionFinished(this, elpasedTime);
 
 	}
 
@@ -73,6 +68,10 @@ public abstract class AbstractMediaTask implements Runnable
 	{
 		return inputFileName;
 	}
-	
+
+	public boolean isCanceled()
+	{
+		return canceled;
+	}
 
 }

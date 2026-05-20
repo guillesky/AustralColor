@@ -11,6 +11,7 @@
     "DELETE": "Eliminar",
     "START_TASKS": "Iniciar Procesos",
     "ANALIZING": "Analizando",
+    "OUTPUT_FILE": "Archivo Destino",
     "PROGRESS": "Progreso",
     "CANCELED": "Cancelado",
     "CORRECTED": "Corregido",

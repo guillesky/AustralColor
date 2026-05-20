@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import org.opencv.core.Mat;
 
 import core.AbstractMediaTask;
-import core.ConsoleMediaTaskListener;
+import core.Environment;
+import core.MediaImportResult;
 import core.MediaTaskListener;
 import core.MediaTaskManager;
 import core.TaskFactory;
-import core.Util;
 import core.VideoAnalysisResult;
 import core.VideoTask;
 import i18n.Messages;
@@ -47,6 +47,11 @@ public class Controlador implements ActionListener, MediaTaskListener
 			break;
 		case IVista.DELETE_TASK:
 			this.deleteTask();
+			break;
+		case IVista.RENAME_DUPLICATED_FILES:
+		case IVista.OVERWRITE_DUPLICATED_FILES:
+		case IVista.IGNORE_DUPLICATED_FILES:
+			this.duplicatedFilePolicyChange();
 			break;
 		}
 
@@ -100,11 +105,16 @@ public class Controlador implements ActionListener, MediaTaskListener
 	}
 
 	@Override
-	public void mediaCorrectCompleted(AbstractMediaTask abstractMediaTask, double elapsedMs)
+	public void mediaCorrectionFinished(AbstractMediaTask abstractMediaTask, double elapsedMs)
 	{
 		this.vista.updateTaskStatus(abstractMediaTask);
-		this.vista.updateLogText(
-				abstractMediaTask.getInputFileName() + " correccion de color completa en " + elapsedMs + " ms");
+		String text = null;
+		if (abstractMediaTask.isCanceled())
+			text = abstractMediaTask.getInputFileName() + " correccion de color Cancelada en " + elapsedMs + " ms";
+		else
+			text = abstractMediaTask.getInputFileName() + " correccion de color Completa en " + elapsedMs + " ms";
+
+		this.vista.updateLogText(text);
 
 	}
 
@@ -124,10 +134,23 @@ public class Controlador implements ActionListener, MediaTaskListener
 
 	public void addFiles(File[] selectedFiles)
 	{
-		ArrayList<AbstractMediaTask> mediaTasks = this.factory.getTasks(selectedFiles);
+		MediaImportResult result = this.factory.getMediaImportResult(selectedFiles);
+		ArrayList<AbstractMediaTask> mediaTasks = result.getMediaTasks();
 		for (AbstractMediaTask task : mediaTasks)
 			MediaTaskManager.getInstance().addTask(task);
+
 		this.vista.addTasks(mediaTasks);
+
+		if (!result.getIgnoredFiles().isEmpty())
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.append("Arvhivos ignorados:\n");
+			for (String fileName : result.getIgnoredFiles())
+			{
+				sb.append(fileName);sb.append("\n");
+			}
+			this.vista.updateLogText(sb.toString());
+		}
 	}
 
 	@Override
@@ -143,6 +166,11 @@ public class Controlador implements ActionListener, MediaTaskListener
 		this.vista.updateTaskStatus(abstractMediaTask);
 		this.vista.updateLogText("Cancelada la correccion de: " + abstractMediaTask.getInputFileName());
 
+	}
+
+	public void duplicatedFilePolicyChange()
+	{
+		Environment.getInstance().setDuplicateFilePolicy(this.vista.getDuplicateFilePolicy());
 	}
 
 }

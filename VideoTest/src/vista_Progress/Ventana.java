@@ -61,7 +61,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	private JPanel panel_opciones;
 	private JRadioButton rdbtnSaltar;
 	private JRadioButton rdbtnSobreescribir;
-	private JRadioButton rdbtnNewRenombrar;
+	private JRadioButton rdbtnRenombrar;
 	private JPanel panel;
 	private JLabel lblNewLabel;
 	private JPanel panel_1;
@@ -75,6 +75,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	private JLabel lblNewLabel_1;
 	private JPanel panel_6;
 	private JButton btnChangeDirectory;
+	private int duplicateFilePolicy = Environment.getInstance().getDuplicateFilePolicy();
 
 	public Ventana()
 	{
@@ -176,15 +177,15 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		rdbtnSobreescribir = new JRadioButton("Sobreescribir Archivos Repetidos");
 		panel_opciones.add(rdbtnSobreescribir);
 
-		rdbtnNewRenombrar = new JRadioButton("Renombrar Archivos Repetidos");
-		rdbtnNewRenombrar.setToolTipText("Renombrar Archivos Repetidos");
-		panel_opciones.add(rdbtnNewRenombrar);
+		rdbtnRenombrar = new JRadioButton("Renombrar Archivos Repetidos");
+		rdbtnRenombrar.setToolTipText("Renombrar Archivos Repetidos");
+		panel_opciones.add(rdbtnRenombrar);
 
 		File currentDir = new File(System.getProperty("user.dir"));
 		this.mediaFileChooser = new MediaFileChooser(currentDir);
 		this.folderFileChooser = new FolderFileChooser(currentDir);
 		this.group.add(this.rdbtnSaltar);
-		this.group.add(this.rdbtnNewRenombrar);
+		this.group.add(this.rdbtnRenombrar);
 		this.group.add(this.rdbtnSobreescribir);
 
 		panel_6 = new JPanel();
@@ -194,11 +195,14 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		btnChangeDirectory.setActionCommand(IVista.CHANGE_OUTPUT);
 		panel_6.add(btnChangeDirectory);
 		this.btnChangeDirectory.addActionListener(this);
+
 		this.btnProcesar.setActionCommand(IVista.START_TASK);
 		this.btnDetener.setActionCommand(IVista.STOP_ALL);
 		this.btnCancelar.setActionCommand(IVista.CANCEL_TASK);
 		this.btnEliminar.setActionCommand(IVista.DELETE_TASK);
-
+		this.rdbtnSaltar.setActionCommand(IVista.IGNORE_DUPLICATED_FILES);
+		this.rdbtnRenombrar.setActionCommand(IVista.RENAME_DUPLICATED_FILES);
+		this.rdbtnSobreescribir.setActionCommand(IVista.OVERWRITE_DUPLICATED_FILES);
 		panel_North = new JPanel();
 		contentPane.add(panel_North, BorderLayout.NORTH);
 
@@ -221,6 +225,10 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		this.btnDetener.addActionListener(controlador);
 		this.btnCancelar.addActionListener(controlador);
 		this.btnEliminar.addActionListener(controlador);
+		this.rdbtnRenombrar.addActionListener(controlador);
+		this.rdbtnSaltar.addActionListener(controlador);
+		this.rdbtnSobreescribir.addActionListener(controlador);
+
 	}
 
 	private void agregarArchivos()
@@ -244,6 +252,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		case IVista.CHANGE_OUTPUT:
 			this.changeDirectory();
 			break;
+
 		}
 
 	}
@@ -285,7 +294,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 
 		this.btnProcesar.setEnabled(
 				MediaTaskManager.getInstance().getQueuedTaskCount() > 0 && !MediaTaskManager.getInstance().isWorking());
-		this.rdbtnNewRenombrar.setEnabled(!MediaTaskManager.getInstance().isWorking());
+		this.rdbtnRenombrar.setEnabled(!MediaTaskManager.getInstance().isWorking());
 		this.rdbtnSaltar.setEnabled(!MediaTaskManager.getInstance().isWorking());
 		this.rdbtnSobreescribir.setEnabled(!MediaTaskManager.getInstance().isWorking());
 
@@ -366,12 +375,32 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		this.btnEliminar.setText(Messages.DELETE.getValue());
 		this.btnProcesar.setText(Messages.START_TASKS.getValue());
 
-		this.rdbtnNewRenombrar.setText(Messages.RENAME.getValue());
+		this.rdbtnRenombrar.setText(Messages.RENAME.getValue());
 		this.rdbtnSaltar.setText(Messages.IGNORE.getValue());
 		this.rdbtnSobreescribir.setText(Messages.OVERWRITE.getValue());
 		this.mediaFileChooser.setDialogTitle(Messages.SELECT_MEDIA_FILES.getValue());
 		this.lblOutputDirectoryLabel.setText(Messages.OUTPUT_FOLDER.getValue());
-		
 
+	}
+
+	@Override
+	public int getDuplicateFilePolicy()
+	{
+		int result = 0;
+		switch (this.group.getSelection().getActionCommand())
+		{
+		case IVista.IGNORE_DUPLICATED_FILES:
+			result = Environment.IGNORE_DUPLICATED_FILES;
+			break;
+		case IVista.RENAME_DUPLICATED_FILES:
+			result = Environment.RENAME_DUPLICATED_FILES;
+			break;
+		case IVista.OVERWRITE_DUPLICATED_FILES:
+			result = Environment.OVERWRITE_DUPLICATED_FILES;
+			break;
+
+		}
+
+		return result;
 	}
 }

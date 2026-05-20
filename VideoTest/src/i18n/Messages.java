@@ -9,7 +9,7 @@ public enum Messages
 	CANCELED("Cancelado"), ANALIZING("Analizando"), CORRECTED("Corregido"), OUTPUT_FOLDER("Carpeta Destino"),
 	CHANGE_OUTPUT_FOLDER("Cambiar Carpeta Destino"), SELECT_OUTPUT_FOLDER("Seleccionar Carpeta Destino"),
 	START_TASKS("Iniciar Procesos"), SELECT_MEDIA_FILES("Seleccionar Imagenes y Videos"),
-	VIDEO_FILES("Archivos de Video"), IMAGE_FILES("Archivos de Imagenes"), MEDIA_FILES("Archivos de Imagen y Video");
+	VIDEO_FILES("Archivos de Video"), IMAGE_FILES("Archivos de Imagenes"), MEDIA_FILES("Archivos de Imagen y Video"), OUTPUT_FILE("Archivo Destino");
 
 	private String value;
 
