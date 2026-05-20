@@ -8,7 +8,7 @@ public class MediaImportResult
 	private ArrayList<AbstractMediaTask> mediaTasks;
 	private ArrayList<String> unknowFiles;
 	private ArrayList<String> alreadyQueuedFiles;
-	private ArrayList<String> ignoredFiles;
+	private ArrayList<String> existingFiles;
 	private HashMap<String, String> renamedFiles;
 	
 	
@@ -17,23 +17,23 @@ public class MediaImportResult
 	
 	
 	public MediaImportResult(ArrayList<AbstractMediaTask> mediaTasks, ArrayList<String> unknowFiles,
-		ArrayList<String> alreadyQueuedFiles, ArrayList<String> ignoredFiles,
+		ArrayList<String> alreadyQueuedFiles, ArrayList<String> existingFiles,
 		HashMap<String, String> renamedFiles)
 	{
 	    super();
 	    this.mediaTasks = mediaTasks;
 	    this.unknowFiles = unknowFiles;
 	    this.alreadyQueuedFiles = alreadyQueuedFiles;
-	    this.ignoredFiles = ignoredFiles;
+	    this.existingFiles = existingFiles;
 	    this.renamedFiles = renamedFiles;
 	}
 	public ArrayList<AbstractMediaTask> getMediaTasks()
 	{
 		return mediaTasks;
 	}
-	public ArrayList<String> getIgnoredFiles()
+	public ArrayList<String> getExistingFiles()
 	{
-		return ignoredFiles;
+		return existingFiles;
 	}
 	public HashMap<String, String> getRenamedFiles()
 	{

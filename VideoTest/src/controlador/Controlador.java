@@ -141,11 +141,11 @@ public class Controlador implements ActionListener, MediaTaskListener
 
 		this.vista.addTasks(mediaTasks);
 
-		if (!result.getIgnoredFiles().isEmpty())
+		if (!result.getExistingFiles().isEmpty())
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.append("Arvhivos ignorados:\n");
-			for (String fileName : result.getIgnoredFiles())
+			for (String fileName : result.getExistingFiles())
 			{
 				sb.append(fileName);sb.append("\n");
 			}

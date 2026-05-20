@@ -8,26 +8,6 @@ import i18n.Messages;
 
 public class TaskFactory
 {
-    private class MediaFileResult
-    {
-	private int fileType;
-	private AbstractMediaTask abstractMediaTask;
-	private boolean outputFileExist;
-
-	public MediaFileResult(int fileType, AbstractMediaTask abstractMediaTask, boolean outputFileExist)
-	{
-	    super();
-	    this.fileType = fileType;
-	    this.abstractMediaTask = abstractMediaTask;
-	    this.outputFileExist = outputFileExist;
-	}
-
-    }
-
-    public TaskFactory()
-    {
-
-    }
 
     public MediaImportResult getMediaImportResult(File[] files)
     {
@@ -52,7 +32,7 @@ public class TaskFactory
 		    unknowFiles.add(f.getAbsolutePath());
 		else
 		{
-		    AbstractMediaTask abstractMediaTask = this.getMediaFileResult(f, type, ignoredFiles, renamedFiles);
+		    AbstractMediaTask abstractMediaTask = this.getAbstractMediaTask(f, type, ignoredFiles, renamedFiles);
 		    if (abstractMediaTask != null)
 			switch (type)
 			{
@@ -73,7 +53,7 @@ public class TaskFactory
 	return result;
     }
 
-    private AbstractMediaTask getMediaFileResult(File file, int type, ArrayList<String> existingFiles,
+    private AbstractMediaTask getAbstractMediaTask(File file, int type, ArrayList<String> existingFiles,
 	    HashMap<String, String> renamedFiles)
     {
 	AbstractMediaTask abstractMediaTask = null;
