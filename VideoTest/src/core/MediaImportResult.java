@@ -6,19 +6,26 @@ import java.util.HashMap;
 public class MediaImportResult
 {
 	private ArrayList<AbstractMediaTask> mediaTasks;
+	private ArrayList<String> unknowFiles;
+	private ArrayList<String> alreadyQueuedFiles;
 	private ArrayList<String> ignoredFiles;
 	private HashMap<String, String> renamedFiles;
-	private ArrayList<String> unknowFiles;
 	
 	
-	public MediaImportResult(ArrayList<AbstractMediaTask> mediaTasks, ArrayList<String> ignoredFiles,
-			HashMap<String, String> renamedFiles,ArrayList<String> unknowFiles)
+
+	
+	
+	
+	public MediaImportResult(ArrayList<AbstractMediaTask> mediaTasks, ArrayList<String> unknowFiles,
+		ArrayList<String> alreadyQueuedFiles, ArrayList<String> ignoredFiles,
+		HashMap<String, String> renamedFiles)
 	{
-		super();
-		this.mediaTasks = mediaTasks;
-		this.ignoredFiles = ignoredFiles;
-		this.renamedFiles = renamedFiles;
-		this.unknowFiles=unknowFiles;
+	    super();
+	    this.mediaTasks = mediaTasks;
+	    this.unknowFiles = unknowFiles;
+	    this.alreadyQueuedFiles = alreadyQueuedFiles;
+	    this.ignoredFiles = ignoredFiles;
+	    this.renamedFiles = renamedFiles;
 	}
 	public ArrayList<AbstractMediaTask> getMediaTasks()
 	{
@@ -35,6 +42,10 @@ public class MediaImportResult
 	public ArrayList<String> getUnknowFiles()
 	{
 		return unknowFiles;
+	}
+	public ArrayList<String> getAlreadyQueuedFiles()
+	{
+	    return alreadyQueuedFiles;
 	}
 	
 	
