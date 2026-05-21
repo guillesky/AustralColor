@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import org.opencv.core.Mat;
 
-public class MediaTaskManager 
+public class MediaTaskManager
 {
 	private static MediaTaskManager instance = null;
 	private boolean stopSignalEmited = false;
@@ -49,17 +49,17 @@ public class MediaTaskManager
 	public synchronized void emitStopSignal()
 	{
 		this.stopSignalEmited = true;
+		this.mediaTasksCanceled.addAll(this.mediaTasksProcessing);
+		this.mediaTasksProcessing.clear();
 		notifyAll();
 	}
 
-	
 	public void videoAnalized(VideoTask videoTask, VideoAnalysisResult videoAnalysisResult)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
 			mediaTaskListener.videoAnalized(videoTask, videoAnalysisResult);
 	}
 
-	
 	public void frameProcessed(VideoTask videoTask, Mat frame, int frameIndex)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
@@ -67,14 +67,12 @@ public class MediaTaskManager
 
 	}
 
-	
 	public void mediaCorrectionFinished(AbstractMediaTask videoTask, double elapsedMs)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
 			mediaTaskListener.mediaCorrectionFinished(videoTask, elapsedMs);
 	}
 
-	
 	public void mediaCorrectInitiated(AbstractMediaTask abstractMediaTask)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
@@ -98,10 +96,13 @@ public class MediaTaskManager
 
 	public boolean isWorking()
 	{
+		if (this.working)
+		{
+			this.working = !this.mediaTasksQueued.isEmpty() || !this.mediaTasksProcessing.isEmpty();
+		}
 		return this.working;
 	}
 
-	
 	public void exceptionThrowed(Exception e)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
@@ -132,7 +133,6 @@ public class MediaTaskManager
 		this.mediaTasksQueued.addFirst(abstractMediaTask);
 	}
 
-	
 	public void updatePercentageCompleted(AbstractMediaTask abstractMediaTask)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
@@ -141,7 +141,8 @@ public class MediaTaskManager
 
 	protected synchronized void fireTask()
 	{
-		while (this.maxSimultaneousProcessing - this.mediaTasksProcessing.size() <= 0)
+		while (this.maxSimultaneousProcessing - this.mediaTasksProcessing.size() <= 0
+				&& !MediaTaskManager.getInstance().isStopSignalEmited())
 			try
 			{
 				wait();
@@ -150,7 +151,7 @@ public class MediaTaskManager
 				this.exceptionThrowed(e);
 
 			}
-		if (!this.mediaTasksQueued.isEmpty())
+		if (!this.mediaTasksQueued.isEmpty()&&!MediaTaskManager.getInstance().isStopSignalEmited())
 		{
 			AbstractMediaTask abstractMediaTask = this.mediaTasksQueued.get(0);
 			Thread h = new Thread(abstractMediaTask);
@@ -158,9 +159,8 @@ public class MediaTaskManager
 			this.mediaTasksQueued.remove(abstractMediaTask);
 			this.mediaTasksProcessing.add(abstractMediaTask);
 
-		}
-		else if (this.mediaTasksProcessing.isEmpty()) 
-			this.working=false;
+		} else if (this.mediaTasksProcessing.isEmpty())
+			this.working = false;
 	}
 
 	public void allTaskFinished(double elapsedMs)
@@ -171,13 +171,13 @@ public class MediaTaskManager
 
 	public void startTask()
 	{
+		this.stopSignalEmited = false;
 		this.working = true;
 		MediaTaskFirer mediaTaskFirer = new MediaTaskFirer();
 		mediaTaskFirer.start();
 
 	}
 
-	
 	public void videoTaskCanceled(AbstractMediaTask abstractMediaTask)
 	{
 		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
@@ -193,17 +193,27 @@ public class MediaTaskManager
 	{
 		return this.mediaTasksQueued.size();
 	}
-	
-	
-	public synchronized boolean isInQueded(String inputPath) 
+
+	public synchronized boolean isInQueded(String inputPath)
 	{
-		boolean result =false;
-		Iterator<AbstractMediaTask>it=this.mediaTasksQueued.iterator();
-		while(it.hasNext()&&!result) 
+		boolean result = false;
+		Iterator<AbstractMediaTask> it = this.mediaTasksQueued.iterator();
+		while (it.hasNext() && !result)
 		{
-			result=it.next().getInputPath().equals(inputPath);
+			result = it.next().getInputPath().equals(inputPath);
 		}
 		return result;
+	}
+
+	public void videoTaskCompleted(VideoTask videoTask)
+	{
+		for (MediaTaskListener mediaTaskListener : this.mediaTaskListeners)
+			mediaTaskListener.videoTaskCompleted(videoTask);
+	}
+
+	public synchronized boolean isStopSignalEmited()
+	{
+		return stopSignalEmited;
 	}
 
 }

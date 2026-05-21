@@ -15,6 +15,9 @@ public class Util
 
 	private static final Set<String> IMAGE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "bmp", "gif", "webp", "dng", "gpr",
 			"arw");
+	
+	public static final String outputVideoExtension=".mp4";
+	public static final String outputImageExtension=".jpg";
 
 	private static String sufix = "corrected";
 

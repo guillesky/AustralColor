@@ -142,15 +142,13 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		panel_4 = new JPanel();
 		panel_botones.add(panel_4);
 
-		btnCancelar = new JButton("Cancelar\n");
-		btnCancelar.setActionCommand((String) null);
-		panel_4.add(btnCancelar);
+		btnCancelar = new JButton("Cancelar");
+			panel_4.add(btnCancelar);
 
 		panel_5 = new JPanel();
 		panel_botones.add(panel_5);
 
-		btnDetener = new JButton("Detener\n");
-		btnDetener.setActionCommand((String) null);
+		btnDetener = new JButton("Detener");
 		panel_5.add(btnDetener);
 
 		this.panel_opciones = new JPanel();
@@ -276,7 +274,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	@Override
 	public void updateTaskStatus(AbstractMediaTask abstractMediaTask)
 	{
-		this.updateCell(abstractMediaTask, 2);
+		this.updateCell(abstractMediaTask, 3);
 		this.checkEnableButtons();
 	}
 

@@ -48,6 +48,10 @@ public class Controlador implements ActionListener, MediaTaskListener
 		case IVista.DELETE_TASK:
 			this.deleteTask();
 			break;
+		case IVista.STOP_ALL:
+			MediaTaskManager.getInstance().emitStopSignal();
+			break;
+
 		case IVista.RENAME_DUPLICATED_FILES:
 		case IVista.OVERWRITE_DUPLICATED_FILES:
 		case IVista.IGNORE_DUPLICATED_FILES:
@@ -140,17 +144,50 @@ public class Controlador implements ActionListener, MediaTaskListener
 			MediaTaskManager.getInstance().addTask(task);
 
 		this.vista.addTasks(mediaTasks);
+		StringBuilder sb = new StringBuilder();
+		if (!result.getUnknowFiles().isEmpty())
+		{
+			sb.append("Archivos no reconocidos:\n");
+			for (String fileName : result.getUnknowFiles())
+			{
+				sb.append(fileName);
+				sb.append("\n");
+			}
 
+		}
+
+		if (!result.getAlreadyQueuedFiles().isEmpty())
+		{
+			sb.append("Los siguientes archivos ya estaban en cola:\n");
+			for (String fileName : result.getAlreadyQueuedFiles())
+			{
+				sb.append(fileName);
+				sb.append("\n");
+			}
+
+		}
 		if (!result.getExistingFiles().isEmpty())
 		{
-			StringBuilder sb = new StringBuilder();
-			sb.append("Arvhivos ignorados:\n");
+			if (Environment.getInstance().getDuplicateFilePolicy() == Environment.OVERWRITE_DUPLICATED_FILES)
+				sb.append("Los siguientes archivos ya existian, seran soreescritos:\n");
+			else if (Environment.getInstance().getDuplicateFilePolicy() == Environment.IGNORE_DUPLICATED_FILES)
+				sb.append("Los siguientes archivos ya existian, seran ignorados:\n");
 			for (String fileName : result.getExistingFiles())
 			{
-				sb.append(fileName);sb.append("\n");
+				sb.append(fileName);
+				sb.append("\n");
 			}
-			this.vista.updateLogText(sb.toString());
+
 		}
+		if (!result.getRenamedFiles().isEmpty())
+		{
+			sb.append("Los siguientes archivos ya existian, seran procesados con los nombres:\n");
+			for (String fileName : result.getRenamedFiles().keySet())
+				sb.append(fileName + " ---> " + result.getRenamedFiles().get(fileName) + "\n");
+
+		}
+		sb.append("Se agregaron " + result.getMediaTasks().size() + " nuevos archivos a procesar.\n");
+		this.vista.updateLogText(sb.toString());
 	}
 
 	@Override
@@ -171,6 +208,13 @@ public class Controlador implements ActionListener, MediaTaskListener
 	public void duplicatedFilePolicyChange()
 	{
 		Environment.getInstance().setDuplicateFilePolicy(this.vista.getDuplicateFilePolicy());
+	}
+
+	@Override
+	public void videoTaskCompleted(VideoTask videoTask)
+	{
+		this.vista.updateTaskStatus(videoTask);
+
 	}
 
 }

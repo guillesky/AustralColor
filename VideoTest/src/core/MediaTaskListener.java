@@ -19,4 +19,6 @@ public interface MediaTaskListener
 	void videoTaskCanceled(AbstractMediaTask abstractMediaTask);
 
 	void allTaskFinished(double elapsedMs);
+
+	void videoTaskCompleted(VideoTask videoTask);
 }

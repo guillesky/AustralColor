@@ -55,7 +55,7 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	@Override
 	public void allTaskFinished(double elapsedMs)
 	{
-		System.out.println("Todos los procesos terminaron "+elapsedMs);
+		System.out.println("Todos los procesos terminaron " + elapsedMs);
 	}
 
 	@Override
@@ -63,6 +63,12 @@ public class ConsoleMediaTaskListener implements MediaTaskListener
 	{
 		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" + abstractMediaTask.getInputPath()
 				+ "\n CANCELADO\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	}
+
+	@Override
+	public void videoTaskCompleted(VideoTask videoTask)
+	{
+		System.out.println(videoTask.getInputPath() + "Completado");
 	}
 
 }

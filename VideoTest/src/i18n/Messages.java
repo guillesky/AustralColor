@@ -5,11 +5,11 @@ public enum Messages
 	ACCEPT("Aceptar"), CANCEL("Cancelar"), EXIT("Salir"), FILE("Archivo"), STATUS("Estado"), COMPLETED("Completo"),
 	ADD_FILES("Agregar Archivos"), DELETE("Eliminar"), STOP("Detener"), OPTIONS("Opciones"),
 	OVERWRITE("Sobreescribir archivos existentes"), IGNORE("Ignorar Archivos Existentes"),
-	RENAME("Renombrar Archivos Existentes"), PROGRESS("Progreso"), QUEUED("En Cola"), PROCESSING("Prosesando"),
-	CANCELED("Cancelado"), ANALIZING("Analizando"), CORRECTED("Corregido"), OUTPUT_FOLDER("Carpeta Destino"),
+	RENAME("Renombrar Archivos Existentes"), PROGRESS("Progreso"), QUEUED("En Cola"), PROCESSING("Prosesando..."),
+	CANCELED("Cancelado"), ANALIZING("Analizando..."), CORRECTED("Corregido"), OUTPUT_FOLDER("Carpeta Destino"),
 	CHANGE_OUTPUT_FOLDER("Cambiar Carpeta Destino"), SELECT_OUTPUT_FOLDER("Seleccionar Carpeta Destino"),
 	START_TASKS("Iniciar Procesos"), SELECT_MEDIA_FILES("Seleccionar Imagenes y Videos"),
-	VIDEO_FILES("Archivos de Video"), IMAGE_FILES("Archivos de Imagenes"), MEDIA_FILES("Archivos de Imagen y Video"), OUTPUT_FILE("Archivo Destino");
+	VIDEO_FILES("Archivos de Video"), IMAGE_FILES("Archivos de Imagenes"), MEDIA_FILES("Archivos de Imagen y Video"), OUTPUT_FILE("Archivo Destino"), PERCENT("_porciento"), CANCELING("Cancelando..."), FINISHING("Terminando...");
 
 	private String value;
 

@@ -69,6 +69,7 @@ public class VideoTask extends AbstractMediaTask
 		double elapsedMs = 0;
 		long start = System.nanoTime();
 		this.status = Messages.ANALIZING.getValue();
+		MediaTaskManager.getInstance().mediaCorrectInitiated(this);
 		this.analyzeVideo();
 		this.status = Messages.PROCESSING.getValue();
 		VideoCapture cap = new VideoCapture(this.getInputPath());
@@ -142,19 +143,31 @@ public class VideoTask extends AbstractMediaTask
 
 			if (MediaTaskManager.getInstance().wasCanceled(this))
 			{
-				this.status = Messages.CANCELED.getValue();
+				this.status = Messages.CANCELING.getValue();
 				MediaTaskManager.getInstance().videoTaskCanceled(this);
-				this.canceled=true;
+				this.canceled = true;
 
 			} else
+			{
+				this.status = Messages.FINISHING.getValue();
+				MediaTaskManager.getInstance().videoTaskCompleted(this);
+				
 				this.percentageCompleted = 100;
+			}
 			process.waitFor();
 
 			long end = System.nanoTime();
 
 			elapsedMs = (end - start) / 1_000_000.0;
-			if (MediaTaskManager.getInstance().wasCanceled(this))
+			if (this.canceled)
+			{
 				this.renameCanceledFile();
+				this.status = Messages.CANCELED.getValue();
+				
+			}
+			else
+				this.status = Messages.CORRECTED.getValue();
+			
 		} catch (IOException | InterruptedException e)
 		{
 			MediaTaskManager.getInstance().exceptionThrowed(e);
@@ -173,10 +186,13 @@ public class VideoTask extends AbstractMediaTask
 
 	private void renameCanceledFile()
 	{
+		this.outputCanceledFileName += "_" + this.getPercentageCompleted() + Messages.PERCENT.getValue()
+				+ Util.outputVideoExtension;
 		File source = new File(this.getOutputPath());
 
 		File target = new File(this.outputCanceledFileName);
-
+		if (target.exists())
+			target.delete();
 		source.renameTo(target);
 	}
 }

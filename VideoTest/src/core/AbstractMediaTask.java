@@ -37,7 +37,7 @@ public abstract class AbstractMediaTask implements Runnable
 	public void run()
 	{
 
-		MediaTaskManager.getInstance().mediaCorrectInitiated(this);
+		
 		double elpasedTime = this.processMedia();
 
 		MediaTaskManager.getInstance().releaseResource(this);
