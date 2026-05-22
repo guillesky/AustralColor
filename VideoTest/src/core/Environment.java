@@ -1,6 +1,7 @@
 package core;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -8,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import i18n.Language;
+import i18n.Messages;
 
 public class Environment
 {
@@ -28,7 +30,7 @@ public class Environment
 
 	private Environment()
 	{
-		this.readLanguage("es.json");
+		this.readConfig();
 		File currentDir = new File(System.getProperty("user.dir"));
 		this.outputPath = currentDir.getAbsolutePath();
 
@@ -75,4 +77,25 @@ public class Environment
 		this.duplicateFilePolicy = duplicateFilePolicy;
 	}
 
+	private void readConfig()
+	{
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		FileReader reader;
+		Config config;
+
+		try
+		{
+			reader = new FileReader("config.json");
+			config = gson.fromJson(reader, Config.class);
+			reader.close();
+			MediaTaskManager.getInstance().setMaxSimultaneousProcessing(config.getMaxSimultaneousProcessing());
+			this.readLanguage(config.getLanguageFile());
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }

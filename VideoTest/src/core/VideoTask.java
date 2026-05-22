@@ -68,7 +68,7 @@ public class VideoTask extends AbstractMediaTask
 	{
 		double elapsedMs = 0;
 		long start = System.nanoTime();
-		this.status = Messages.ANALIZING.getValue();
+		this.status = Messages.ANALYZING.getValue();
 		MediaTaskManager.getInstance().mediaCorrectInitiated(this);
 		this.analyzeVideo();
 		this.status = Messages.PROCESSING.getValue();

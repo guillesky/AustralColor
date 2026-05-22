@@ -1,18 +1,25 @@
 package vista_Progress;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -23,23 +30,25 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import controlador.Controlador;
 import controlador.IVista;
 import core.AbstractMediaTask;
 import core.Environment;
 import core.MediaTaskManager;
-import core.VideoTask;
+import core.ThreadWaiter;
+import core.ThreadWaiterListener;
 import i18n.Messages;
 
-public class Ventana extends JFrame implements IVista, ActionListener
+public class Ventana extends JFrame implements IVista, ActionListener, TableModelListener
 {
 
 	private static final long serialVersionUID = 1L;
 	private Controlador controlador;
 	private JPanel contentPane;
 	private JSplitPane splitPaneArribaAbajo;
-	private JSplitPane splitPaneDerechaIzquierda;
 	private JPanel panelWest;
 	private JButton btnAgregar;
 	private JButton btnProcesar;
@@ -47,9 +56,9 @@ public class Ventana extends JFrame implements IVista, ActionListener
 
 	private JScrollPane scrollPane;
 	private JTextArea textArea;
-	private JScrollPane scrollPane_1;
+	private JScrollPane scrollPaneTable;
 	private JTable table;
-	private JPanel panel_Derecha;
+
 	private TableModelAbstractMediaTak modelo;
 
 	private MediaFileChooser mediaFileChooser;
@@ -63,7 +72,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	private JRadioButton rdbtnSobreescribir;
 	private JRadioButton rdbtnRenombrar;
 	private JPanel panel;
-	private JLabel lblNewLabel;
+	private JLabel lblProcesosSimultaneos;
 	private JPanel panel_1;
 	private JButton btnEliminar;
 	private JPanel panel_4;
@@ -71,114 +80,96 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	private JPanel panel_5;
 	private JButton btnDetener;
 	private JPanel panel_North;
+	private JPanel panel_Sur;
 	private JLabel lblOutputDirectoryLabel;
-	private JLabel lblNewLabel_1;
+	private JLabel lblOutputPath;
+	private JLabel lblFpsLegend;
+	private JLabel lblFpsValue;
+
 	private JPanel panel_6;
 	private JButton btnChangeDirectory;
-	private int duplicateFilePolicy = Environment.getInstance().getDuplicateFilePolicy();
+	private TitledBorder titledBorderOpciones;
+	private boolean shuttingDown = false;
 
 	public Ventana()
 	{
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 911, 600);
+		this.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				shutdown();
+			}
+		});
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(this.contentPane);
 		this.contentPane.setLayout(new BorderLayout(0, 0));
-
 		this.splitPaneArribaAbajo = new JSplitPane();
 		this.splitPaneArribaAbajo.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		this.contentPane.add(this.splitPaneArribaAbajo);
-		this.splitPaneDerechaIzquierda = new JSplitPane();
-
-		this.splitPaneArribaAbajo.setLeftComponent(splitPaneDerechaIzquierda);
-
+		this.scrollPaneTable = new JScrollPane();
+		this.splitPaneArribaAbajo.setLeftComponent(scrollPaneTable);
 		this.scrollPane = new JScrollPane();
 		this.splitPaneArribaAbajo.setRightComponent(this.scrollPane);
-
 		this.splitPaneArribaAbajo.setResizeWeight(0.8);
-		this.splitPaneDerechaIzquierda.setResizeWeight(0.8);
-
-		this.scrollPane_1 = new JScrollPane();
-		this.splitPaneDerechaIzquierda.setLeftComponent(this.scrollPane_1);
 		this.modelo = new TableModelAbstractMediaTak();
 		this.table = new JTableWithProgress(modelo, 1);
-		this.scrollPane_1.setViewportView(this.table);
-
-		panel_Derecha = new JPanel();
-		splitPaneDerechaIzquierda.setRightComponent(panel_Derecha);
+		this.scrollPaneTable.setViewportView(this.table);
 		this.textArea = new JTextArea();
 		this.scrollPane.setViewportView(this.textArea);
-
 		this.panelWest = new JPanel();
 		this.contentPane.add(this.panelWest, BorderLayout.WEST);
 		this.panelWest.setLayout(new GridLayout(0, 1, 0, 0));
-
 		this.panel_botones = new JPanel();
 		this.panelWest.add(this.panel_botones);
 		this.panel_botones.setLayout(new GridLayout(0, 1, 0, 0));
-
 		this.panel_2 = new JPanel();
 		this.panel_botones.add(this.panel_2);
-
-		this.btnAgregar = new JButton("Agregar Archivos");
+		this.btnAgregar = new JButton();
 		this.panel_2.add(this.btnAgregar);
 		this.btnAgregar.addActionListener(this);
 		this.btnAgregar.setActionCommand(IVista.ADD_FILES);
-
 		panel_1 = new JPanel();
 		panel_botones.add(panel_1);
-
-		btnEliminar = new JButton("Eliminar");
+		btnEliminar = new JButton();
 		btnEliminar.setActionCommand((String) null);
 		panel_1.add(btnEliminar);
-
 		this.panel_3 = new JPanel();
 		this.panel_botones.add(this.panel_3);
-
-		this.btnProcesar = new JButton("Procesar");
+		this.btnProcesar = new JButton();
 		this.panel_3.add(this.btnProcesar);
-
 		panel_4 = new JPanel();
 		panel_botones.add(panel_4);
-
-		btnCancelar = new JButton("Cancelar");
-			panel_4.add(btnCancelar);
-
+		btnCancelar = new JButton();
+		panel_4.add(btnCancelar);
 		panel_5 = new JPanel();
 		panel_botones.add(panel_5);
-
-		btnDetener = new JButton("Detener");
+		btnDetener = new JButton();
 		panel_5.add(btnDetener);
-
 		this.panel_opciones = new JPanel();
-		panel_opciones
-				.setBorder(new TitledBorder(null, "Opciones", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		this.titledBorderOpciones = new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null);
+		panel_opciones.setBorder(this.titledBorderOpciones);
 		this.panelWest.add(this.panel_opciones);
 		panel_opciones.setLayout(new GridLayout(0, 1, 0, 0));
-
 		panel = new JPanel();
 		panel_opciones.add(panel);
-
-		lblNewLabel = new JLabel("Procesos Simultaneos:");
-		panel.add(lblNewLabel);
-
+		lblProcesosSimultaneos = new JLabel();
+		panel.add(lblProcesosSimultaneos);
 		this.spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(Integer.valueOf(4), Integer.valueOf(1), null, Integer.valueOf(1)));
+		spinner.setModel(new SpinnerNumberModel(MediaTaskManager.getInstance().getMaxSimultaneousProcessing(),
+				Integer.valueOf(1), null, Integer.valueOf(1)));
 		panel.add(spinner);
-		this.spinner.setToolTipText("");
 
-		rdbtnSaltar = new JRadioButton("Omitir Archivos Repetidos");
+		rdbtnSaltar = new JRadioButton();
 		rdbtnSaltar.setSelected(true);
 		panel_opciones.add(rdbtnSaltar);
-
-		rdbtnSobreescribir = new JRadioButton("Sobreescribir Archivos Repetidos");
+		rdbtnSobreescribir = new JRadioButton();
 		panel_opciones.add(rdbtnSobreescribir);
-
-		rdbtnRenombrar = new JRadioButton("Renombrar Archivos Repetidos");
-		rdbtnRenombrar.setToolTipText("Renombrar Archivos Repetidos");
+		rdbtnRenombrar = new JRadioButton();
 		panel_opciones.add(rdbtnRenombrar);
-
 		File currentDir = new File(System.getProperty("user.dir"));
 		this.mediaFileChooser = new MediaFileChooser(currentDir);
 		this.folderFileChooser = new FolderFileChooser(currentDir);
@@ -189,7 +180,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		panel_6 = new JPanel();
 		panel_opciones.add(panel_6);
 
-		btnChangeDirectory = new JButton("Cambiar Carpeta Destino");
+		btnChangeDirectory = new JButton();
 		btnChangeDirectory.setActionCommand(IVista.CHANGE_OUTPUT);
 		panel_6.add(btnChangeDirectory);
 		this.btnChangeDirectory.addActionListener(this);
@@ -204,15 +195,59 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		panel_North = new JPanel();
 		contentPane.add(panel_North, BorderLayout.NORTH);
 
-		lblOutputDirectoryLabel = new JLabel("Ouput Directory:");
+		this.panel_Sur = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		contentPane.add(panel_Sur, BorderLayout.SOUTH);
+		this.lblFpsLegend = new JLabel();
+		this.lblFpsValue = new JLabel();
+
+		this.panel_Sur.add(this.lblFpsLegend);
+		this.panel_Sur.add(this.lblFpsValue);
+
+		lblOutputDirectoryLabel = new JLabel();
 		panel_North.add(lblOutputDirectoryLabel);
 
-		lblNewLabel_1 = new JLabel("New label");
-		panel_North.add(lblNewLabel_1);
+		lblOutputPath = new JLabel();
+		panel_North.add(lblOutputPath);
 		this.checkEnableButtons();
 		this.setTextComponents();
+		this.modelo.addTableModelListener(this);
 		this.setVisible(true);
 
+	}
+
+	protected void shutdown()
+	{
+		if (!this.shuttingDown)
+		{
+			String text = null;
+			if (!MediaTaskManager.getInstance().isWorking())
+				text = Messages.CONFIRM_EXIT_MESSAGE.getValue();
+			else
+				text = Messages.CONFIRM_EXIT_MESSAGE_WITH_PENDING_THREADS.getValue();
+			int result = JOptionPane.showConfirmDialog(this, text, Messages.EXIT_DIALOG_TITLE.getValue(),
+					JOptionPane.YES_NO_OPTION);
+			if (result == JOptionPane.YES_OPTION)
+			{
+				this.shuttingDown = true;
+				if (MediaTaskManager.getInstance().isWorking())
+				{
+
+					MediaTaskManager.getInstance().emitStopSignal();
+					ThreadWaiter t = new ThreadWaiter();
+					t.addThreadWaiterListener(new ThreadWaiterListener()
+					{
+						public void allThreadStop()
+						{
+							System.exit(0);
+						}
+					});
+					t.start();
+					this.createShutdownDialog();
+
+				} else
+					System.exit(0);
+			}
+		}
 	}
 
 	@Override
@@ -295,6 +330,9 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		this.rdbtnRenombrar.setEnabled(!MediaTaskManager.getInstance().isWorking());
 		this.rdbtnSaltar.setEnabled(!MediaTaskManager.getInstance().isWorking());
 		this.rdbtnSobreescribir.setEnabled(!MediaTaskManager.getInstance().isWorking());
+		this.btnEliminar.setEnabled(this.modelo.getRowCount() > 0);
+		this.btnCancelar.setEnabled(MediaTaskManager.getInstance().isWorking());
+		this.btnDetener.setEnabled(MediaTaskManager.getInstance().isWorking());
 
 	}
 
@@ -344,7 +382,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	public void allTaskFinished(double elapsedMs)
 	{
 		this.checkEnableButtons();
-		this.updateLogText("Todos los procesos completos en " + elapsedMs + " ms");
+		this.updateLogText("Correccion de archivos finalizada en " + elapsedMs + " ms");
 
 	}
 
@@ -365,7 +403,7 @@ public class Ventana extends JFrame implements IVista, ActionListener
 	private void setTextComponents()
 	{
 		this.folderFileChooser.setDialogTitle(Messages.SELECT_OUTPUT_FOLDER.getValue());
-		this.lblNewLabel_1.setText(Environment.getInstance().getOutputPath());
+		this.lblOutputPath.setText(Environment.getInstance().getOutputPath());
 		this.btnAgregar.setText(Messages.ADD_FILES.getValue());
 		this.btnCancelar.setText(Messages.CANCEL.getValue());
 		this.btnChangeDirectory.setText(Messages.CHANGE_OUTPUT_FOLDER.getValue());
@@ -378,7 +416,8 @@ public class Ventana extends JFrame implements IVista, ActionListener
 		this.rdbtnSobreescribir.setText(Messages.OVERWRITE.getValue());
 		this.mediaFileChooser.setDialogTitle(Messages.SELECT_MEDIA_FILES.getValue());
 		this.lblOutputDirectoryLabel.setText(Messages.OUTPUT_FOLDER.getValue());
-
+		this.titledBorderOpciones.setTitle(Messages.OPTIONS.getValue());
+		this.lblFpsLegend.setText(Messages.FPS_LEGEND.getValue());
 	}
 
 	@Override
@@ -401,4 +440,50 @@ public class Ventana extends JFrame implements IVista, ActionListener
 
 		return result;
 	}
+
+	@Override
+	public void tableChanged(TableModelEvent e)
+	{
+		this.checkEnableButtons();
+	}
+
+	@Override
+	public void updateFPS(double fps)
+	{
+		this.lblFpsValue.setText(String.format("%.4f", fps));
+
+	}
+
+	private JDialog createShutdownDialog()
+	{
+		JDialog dialog = new JDialog(this, Messages.EXITING.getValue(), true);
+
+		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+		dialog.setResizable(false);
+
+		JPanel panel = new JPanel();
+
+		panel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+
+		panel.setLayout(new BorderLayout(10, 10));
+
+		JLabel label = new JLabel(Messages.EXITING_MESSAGE.getValue());
+
+		JProgressBar progressBar = new JProgressBar();
+
+		progressBar.setIndeterminate(true);
+
+		panel.add(label, BorderLayout.NORTH);
+		panel.add(progressBar, BorderLayout.CENTER);
+
+		dialog.getContentPane().add(panel);
+
+		dialog.pack();
+
+		dialog.setLocationRelativeTo(this);
+		dialog.setVisible(true);
+		return dialog;
+	}
+
 }

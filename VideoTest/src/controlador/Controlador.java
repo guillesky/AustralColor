@@ -22,6 +22,11 @@ public class Controlador implements ActionListener, MediaTaskListener
 
 	private IVista vista;
 	private TaskFactory factory = new TaskFactory();
+	private int processedFrame = 0;
+	private long start;
+
+	private long end;
+	private double maxDeltaFrame = 20;
 
 	public Controlador(IVista vista)
 	{
@@ -40,7 +45,8 @@ public class Controlador implements ActionListener, MediaTaskListener
 		switch (e.getActionCommand())
 		{
 		case IVista.START_TASK:
-			MediaTaskManager.getInstance().startTask();
+			this.startTasks();
+
 			break;
 		case IVista.CANCEL_TASK:
 			this.cancelTask();
@@ -49,7 +55,7 @@ public class Controlador implements ActionListener, MediaTaskListener
 			this.deleteTask();
 			break;
 		case IVista.STOP_ALL:
-			MediaTaskManager.getInstance().emitStopSignal();
+			this.stopAll();
 			break;
 
 		case IVista.RENAME_DUPLICATED_FILES:
@@ -59,6 +65,18 @@ public class Controlador implements ActionListener, MediaTaskListener
 			break;
 		}
 
+	}
+
+	private void stopAll()
+	{
+		MediaTaskManager.getInstance().emitStopSignal();
+
+	}
+
+	private void startTasks()
+	{
+		MediaTaskManager.getInstance().startTask();
+		this.start = System.nanoTime();
 	}
 
 	private void deleteTask()
@@ -97,8 +115,16 @@ public class Controlador implements ActionListener, MediaTaskListener
 	@Override
 	public void frameProcessed(VideoTask videoTask, Mat frame, int frameIndex)
 	{
-		// TODO Auto-generated method stub
+		this.processedFrame++;
+		if (this.processedFrame >= this.maxDeltaFrame)
+		{
+			this.end = System.nanoTime();
+			double elapsedMs = (end - start) / 1_000_000_000.0;
+			this.vista.updateFPS(this.maxDeltaFrame / elapsedMs);
 
+			this.processedFrame = 0;
+			this.start = System.nanoTime();
+		}
 	}
 
 	@Override
@@ -114,9 +140,11 @@ public class Controlador implements ActionListener, MediaTaskListener
 		this.vista.updateTaskStatus(abstractMediaTask);
 		String text = null;
 		if (abstractMediaTask.isCanceled())
-			text = abstractMediaTask.getInputFileName() + " correccion de color Cancelada en " + elapsedMs + " ms";
+			text = abstractMediaTask.getInputFileName() + Messages.TASK_CANCELED.getValue() + elapsedMs
+					+ Messages.MILLISECONDS.getValue();
 		else
-			text = abstractMediaTask.getInputFileName() + " correccion de color Completa en " + elapsedMs + " ms";
+			text = abstractMediaTask.getInputFileName() + Messages.TASK_COMPLETED.getValue() + elapsedMs
+					+ Messages.MILLISECONDS.getValue();
 
 		this.vista.updateLogText(text);
 
@@ -147,7 +175,7 @@ public class Controlador implements ActionListener, MediaTaskListener
 		StringBuilder sb = new StringBuilder();
 		if (!result.getUnknowFiles().isEmpty())
 		{
-			sb.append("Archivos no reconocidos:\n");
+			sb.append(Messages.UNKNOWN_FILES.getValue());
 			for (String fileName : result.getUnknowFiles())
 			{
 				sb.append(fileName);
@@ -158,7 +186,7 @@ public class Controlador implements ActionListener, MediaTaskListener
 
 		if (!result.getAlreadyQueuedFiles().isEmpty())
 		{
-			sb.append("Los siguientes archivos ya estaban en cola:\n");
+			sb.append(Messages.ALREADY_QUEUED_FILES.getValue());
 			for (String fileName : result.getAlreadyQueuedFiles())
 			{
 				sb.append(fileName);
@@ -169,9 +197,9 @@ public class Controlador implements ActionListener, MediaTaskListener
 		if (!result.getExistingFiles().isEmpty())
 		{
 			if (Environment.getInstance().getDuplicateFilePolicy() == Environment.OVERWRITE_DUPLICATED_FILES)
-				sb.append("Los siguientes archivos ya existian, seran soreescritos:\n");
+				sb.append(Messages.ALREADY_EXISTING_FILES_OVERWRITTEN.getValue());
 			else if (Environment.getInstance().getDuplicateFilePolicy() == Environment.IGNORE_DUPLICATED_FILES)
-				sb.append("Los siguientes archivos ya existian, seran ignorados:\n");
+				sb.append(Messages.ALREADY_EXISTING_FILES_IGNORED.getValue());
 			for (String fileName : result.getExistingFiles())
 			{
 				sb.append(fileName);
@@ -181,12 +209,12 @@ public class Controlador implements ActionListener, MediaTaskListener
 		}
 		if (!result.getRenamedFiles().isEmpty())
 		{
-			sb.append("Los siguientes archivos ya existian, seran procesados con los nombres:\n");
+			sb.append(Messages.ALREADY_EXISTING_FILES_RENAMED.getValue());
 			for (String fileName : result.getRenamedFiles().keySet())
 				sb.append(fileName + " ---> " + result.getRenamedFiles().get(fileName) + "\n");
 
 		}
-		sb.append("Se agregaron " + result.getMediaTasks().size() + " nuevos archivos a procesar.\n");
+		sb.append(Messages.ADDED.getValue() + result.getMediaTasks().size() + Messages.NEW_FILES_TO_PROCESS.getValue());
 		this.vista.updateLogText(sb.toString());
 	}
 
@@ -201,7 +229,7 @@ public class Controlador implements ActionListener, MediaTaskListener
 	public void videoTaskCanceled(AbstractMediaTask abstractMediaTask)
 	{
 		this.vista.updateTaskStatus(abstractMediaTask);
-		this.vista.updateLogText("Cancelada la correccion de: " + abstractMediaTask.getInputFileName());
+		this.vista.updateLogText(Messages.CANCELED_TASK_OF.getValue() + abstractMediaTask.getInputFileName());
 
 	}
 

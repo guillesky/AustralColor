@@ -7,14 +7,13 @@ public class MediaTaskFirer extends Thread
 	public void run()
 	{
 		long start = System.nanoTime();
-		while (MediaTaskManager.getInstance().isWorking()&&!MediaTaskManager.getInstance().isStopSignalEmited())
+		while (MediaTaskManager.getInstance().isWorking() && !MediaTaskManager.getInstance().isStopSignalEmited())
 		{
 			MediaTaskManager.getInstance().fireTask();
 		}
 		long end = System.nanoTime();
 		double elapsedMs = (end - start) / 1_000_000.0;
 		MediaTaskManager.getInstance().allTaskFinished(elapsedMs);
-System.out.println("FIRER TERMINO");
 	}
 
 }

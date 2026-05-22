@@ -7,6 +7,7 @@ import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import core.Config;
 import i18n.Language;
 import i18n.Messages;
 
@@ -59,7 +60,14 @@ public class IOJsonPrueba
 			gson.toJson(l, writer);
 			writer.close();
 			System.out.println(l);
-
+			
+			/*
+			Config c=new Config();
+				
+			writer = new FileWriter("config.json");
+			gson.toJson(c, writer);
+			writer.close();
+*/
 		}
 	}
 }

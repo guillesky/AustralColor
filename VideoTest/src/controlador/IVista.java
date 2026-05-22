@@ -34,5 +34,6 @@ public interface IVista
 	void allTaskFinished(double elapsedMs);
 	public void updateLogText(String text);
 	int getDuplicateFilePolicy();
+	public void updateFPS(double fps);
 
 }

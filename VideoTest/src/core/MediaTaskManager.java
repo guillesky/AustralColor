@@ -16,6 +16,7 @@ public class MediaTaskManager
 	private int maxSimultaneousProcessing = 2;
 	private boolean working = false;
 	private ArrayList<MediaTaskListener> mediaTaskListeners = new ArrayList<MediaTaskListener>();
+	private ArrayList<Thread> threads = new ArrayList<Thread>();
 
 	private MediaTaskManager()
 	{
@@ -151,11 +152,12 @@ public class MediaTaskManager
 				this.exceptionThrowed(e);
 
 			}
-		if (!this.mediaTasksQueued.isEmpty()&&!MediaTaskManager.getInstance().isStopSignalEmited())
+		if (!this.mediaTasksQueued.isEmpty() && !MediaTaskManager.getInstance().isStopSignalEmited())
 		{
 			AbstractMediaTask abstractMediaTask = this.mediaTasksQueued.get(0);
-			Thread h = new Thread(abstractMediaTask);
-			h.start();
+			Thread thread = new Thread(abstractMediaTask);
+			this.threads.add(thread);
+			thread.start();
 			this.mediaTasksQueued.remove(abstractMediaTask);
 			this.mediaTasksProcessing.add(abstractMediaTask);
 
@@ -215,5 +217,11 @@ public class MediaTaskManager
 	{
 		return stopSignalEmited;
 	}
+
+	public ArrayList<Thread> getThreads()
+	{
+		return threads;
+	}
+	
 
 }

@@ -4,12 +4,26 @@ public enum Messages
 {
 	ACCEPT("Aceptar"), CANCEL("Cancelar"), EXIT("Salir"), FILE("Archivo"), STATUS("Estado"), COMPLETED("Completo"),
 	ADD_FILES("Agregar Archivos"), DELETE("Eliminar"), STOP("Detener"), OPTIONS("Opciones"),
-	OVERWRITE("Sobreescribir archivos existentes"), IGNORE("Ignorar Archivos Existentes"),
-	RENAME("Renombrar Archivos Existentes"), PROGRESS("Progreso"), QUEUED("En Cola"), PROCESSING("Prosesando..."),
-	CANCELED("Cancelado"), ANALIZING("Analizando..."), CORRECTED("Corregido"), OUTPUT_FOLDER("Carpeta Destino"),
+	OVERWRITE("Sobrescribir Archivos Existentes"), IGNORE("Ignorar Archivos Existentes"),
+	RENAME("Renombrar Archivos Existentes"), PROGRESS("Progreso"), QUEUED("En Cola"), PROCESSING("Procesando..."),
+	CANCELED("Cancelado"), ANALYZING("Analizando..."), CORRECTED("Corregido"), OUTPUT_FOLDER("Carpeta Destino"),
 	CHANGE_OUTPUT_FOLDER("Cambiar Carpeta Destino"), SELECT_OUTPUT_FOLDER("Seleccionar Carpeta Destino"),
 	START_TASKS("Iniciar Procesos"), SELECT_MEDIA_FILES("Seleccionar Imagenes y Videos"),
-	VIDEO_FILES("Archivos de Video"), IMAGE_FILES("Archivos de Imagenes"), MEDIA_FILES("Archivos de Imagen y Video"), OUTPUT_FILE("Archivo Destino"), PERCENT("_porciento"), CANCELING("Cancelando..."), FINISHING("Terminando...");
+	VIDEO_FILES("Archivos de Video"), IMAGE_FILES("Archivos de Imagenes"), MEDIA_FILES("Archivos de Imagen y Video"),
+	OUTPUT_FILE("Archivo Destino"), PERCENT("_porciento"), CANCELING("Cancelando..."), FINISHING("Finalizando..."),
+	FPS_LEGEND("Frames Procesados por Segundo: "), CONFIRM_EXIT_MESSAGE("Esta seguro que desea salir?"),
+	CONFIRM_EXIT_MESSAGE_WITH_PENDING_THREADS(
+			"Esta seguro que desea salir?\n(Los procesos pendientes seran cancelados)"),
+	EXIT_DIALOG_TITLE("Salir"), EXITING("Saliendo"),
+	EXITING_MESSAGE("Cancelando procesos pendientes, por favor espere..."),
+	TASK_CANCELED(" Correccion de Color Cancelada para "), TASK_COMPLETED(" Correccion de Color Completa para "),
+	MILLISECONDS(" Milisegundos"), UNKNOWN_FILES("Archivos no reconocidos:\n"),
+	ALREADY_QUEUED_FILES("Los siguientes archivos ya estaban en cola:\n"),
+	ALREADY_EXISTING_FILES_OVERWRITTEN("Los siguientes archivos ya existian y seran sobrescritos:\n"),
+	ALREADY_EXISTING_FILES_IGNORED("Los siguientes archivos ya existian y seran ignorados:\n"),
+	ALREADY_EXISTING_FILES_RENAMED("Los siguientes archivos ya existian y seran procesados con los nombres:\n"),
+	ADDED("Se agregaron "), NEW_FILES_TO_PROCESS(" nuevos archivos para procesar.\n"),
+	CANCELED_TASK_OF("Cancelada la correccion de: ");
 
 	private String value;
 
