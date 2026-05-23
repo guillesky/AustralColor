@@ -1,7 +1,6 @@
 package vista;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -13,8 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,7 +44,7 @@ import core.ThreadWaiter;
 import core.ThreadWaiterListener;
 import i18n.Messages;
 
-public class Ventana extends JFrame implements IVista, ActionListener, TableModelListener
+public class VentanaOLD extends JFrame implements IVista, ActionListener, TableModelListener
 {
 
     private static final long serialVersionUID = 1L;
@@ -68,7 +65,8 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 
     private MediaFileChooser mediaFileChooser;
     private FolderFileChooser folderFileChooser;
- 
+    private JPanel panel_2;
+    private JPanel panel_3;
     private ButtonGroup group = new ButtonGroup();
     private JSpinner spinner;
     private JPanel panel_opciones;
@@ -77,11 +75,11 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
     private JRadioButton rdbtnRenombrar;
     private JPanel panel;
     private JLabel lblProcesosSimultaneos;
-  
+    private JPanel panel_1;
     private JButton btnEliminar;
-    
+    private JPanel panel_4;
     private JButton btnCancelar;
-    
+    private JPanel panel_5;
     private JButton btnDetener;
     private JPanel panel_North;
     private JPanel panel_Sur;
@@ -95,10 +93,10 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
     private TitledBorder titledBorderOpciones;
     private boolean shuttingDown = false;
 
-    public Ventana()
+    public VentanaOLD()
     {
 	setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-	setBounds(100, 100, 911, 800);
+	setBounds(100, 100, 911, 600);
 	this.addWindowListener(new WindowAdapter()
 	{
 	    @Override
@@ -129,37 +127,30 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 	this.panelWest.setLayout(new GridLayout(0, 1, 0, 0));
 	this.panel_botones = new JPanel();
 	this.panelWest.add(this.panel_botones);
-	this.panel_botones.setLayout(new BoxLayout(this.panel_botones, BoxLayout.Y_AXIS));
-
+	this.panel_botones.setLayout(new GridLayout(0, 1, 0, 0));
+	this.panel_2 = new JPanel();
+	this.panel_botones.add(this.panel_2);
 	this.btnAgregar = new JButton();
+	this.panel_2.add(this.btnAgregar);
 	this.btnAgregar.addActionListener(this);
 	this.btnAgregar.setActionCommand(IVista.ADD_FILES);
-
-
+	panel_1 = new JPanel();
+	panel_botones.add(panel_1);
 	btnEliminar = new JButton();
 	btnEliminar.setActionCommand((String) null);
-	
+	panel_1.add(btnEliminar);
+	this.panel_3 = new JPanel();
+	this.panel_botones.add(this.panel_3);
 	this.btnProcesar = new JButton();
-	
-
+	this.panel_3.add(this.btnProcesar);
+	panel_4 = new JPanel();
+	panel_botones.add(panel_4);
 	btnCancelar = new JButton();
-	
+	panel_4.add(btnCancelar);
+	panel_5 = new JPanel();
+	panel_botones.add(panel_5);
 	btnDetener = new JButton();
-	
-	this.panel_botones.add( Box.createVerticalGlue());
-	
-	this.panel_botones.add(this.btnAgregar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
-	this.panel_botones.add(btnEliminar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
-	this.panel_botones.add(btnProcesar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
-	this.panel_botones.add(btnCancelar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
-	this.panel_botones.add(btnDetener);
-	this.panel_botones.add( Box.createVerticalGlue());
-	
-	
+	panel_5.add(btnDetener);
 	this.panel_opciones = new JPanel();
 	this.titledBorderOpciones = new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null);
 	panel_opciones.setBorder(this.titledBorderOpciones);
@@ -222,31 +213,26 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 	this.checkEnableButtons();
 	this.setTextComponents();
 	this.modelo.addTableModelListener(this);
-
-	this.set3Icons(this.btnProcesar, "icons/accept_normal.png", "icons/accept_rollover.png",
-		"icons/accept_disabled.png", 32);
-	this.set3Icons(this.btnCancelar, "icons/cancel_normal.png", "icons/cancel_rollover.png",
-		"icons/cancel_disabled.png", 32);
+	
+	
+	this.set3Icons(this.btnProcesar, "icons/accept_normal.png", "icons/accept_rollover.png", "icons/accept_disabled.png", 32);
+	this.set3Icons(this.btnCancelar, "icons/cancel_normal.png", "icons/cancel_rollover.png", "icons/cancel_disabled.png", 32);
 	this.set3Icons(this.btnAgregar, "icons/add_normal.png", "icons/add_rollover.png", "icons/add_disabled.png", 32);
-	this.set3Icons(this.btnDetener, "icons/stop_normal.png", "icons/stop_rollover.png", "icons/stop_disabled.png",
-		32);
-	this.set3Icons(this.btnEliminar, "icons/delete_normal.png", "icons/delete_rollover.png",
-		"icons/delete_disabled.png", 32);
-	this.set3Icons(this.btnChangeDirectory, "icons/outputdir_normal.png", "icons/outputdir_rollover.png",
-		"icons/outputdir_disabled.png", 32);
+	this.set3Icons(this.btnDetener, "icons/stop_normal.png", "icons/stop_rollover.png", "icons/stop_disabled.png", 32);
+	this.set3Icons(this.btnEliminar, "icons/delete_normal.png", "icons/delete_rollover.png", "icons/delete_disabled.png", 32);
+	
 	this.setVisible(true);
 
     }
-
-    private void set3Icons(JButton button, String resourceNormal, String resourceRollover, String reourceDisabled,
-	    int height)
-    {Dimension size =
-    new Dimension(Integer.MAX_VALUE, 40);
-	button.setIcon(getScaledImageIcon(resourceNormal, height));
-	button.setDisabledIcon(getScaledImageIcon(reourceDisabled, height));
-	button.setRolloverIcon(getScaledImageIcon(resourceRollover, height));
+    
+    
+    
+    private void set3Icons(JButton button, String resourceNormal, String resourceRollover, String reourceDisabled,int height)
+    {
+	button.setIcon(getScaledImageIcon(resourceNormal,height));
+	button.setDisabledIcon(getScaledImageIcon(reourceDisabled,height));
+	button.setRolloverIcon(getScaledImageIcon(resourceRollover,height));
 	button.setFocusPainted(false);
-	button.setMaximumSize(size);
     }
 
     private ImageIcon getScaledImageIcon(String resource, int eight)
@@ -443,7 +429,7 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 
     private void setTextComponents()
     {
-	this.setTitle(Environment.APP_NAME + "\t" + Environment.VERSION);
+	this.setTitle(Environment.APP_NAME+"\t"+Environment.VERSION);
 	this.folderFileChooser.setDialogTitle(Messages.SELECT_OUTPUT_FOLDER.getValue());
 	this.lblOutputPath.setText(Environment.getInstance().getOutputPath());
 	this.btnAgregar.setText(Messages.ADD_FILES.getValue());
