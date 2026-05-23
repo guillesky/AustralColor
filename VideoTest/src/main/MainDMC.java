@@ -9,7 +9,7 @@ import org.opencv.core.Core;
 import controlador.Controlador;
 import core.Environment;
 import i18n.Messages;
-import vista_Progress.Ventana;
+import vista.Ventana;
 
 public class MainDMC
 {

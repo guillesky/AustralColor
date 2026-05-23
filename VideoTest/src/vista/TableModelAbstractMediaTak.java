@@ -1,9 +1,12 @@
-package vista_Progress;
+package vista;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
+
+import core.AbstractMediaTask;
+import i18n.Messages;
 
 class TableModelAbstractMediaTak extends AbstractTableModel
 {
@@ -34,7 +37,7 @@ class TableModelAbstractMediaTak extends AbstractTableModel
 	@Override
 	public int getColumnCount()
 	{
-		return 3;
+		return 4;
 	}
 
 	@Override
@@ -45,13 +48,17 @@ class TableModelAbstractMediaTak extends AbstractTableModel
 		switch (col)
 		{
 		case 0:
-			result = "Archivo";
+			result = Messages.FILE.getValue();
 			break;
 		case 1:
-			result = "Progreso";
+			result = Messages.PROGRESS.getValue();
 			break;
 		case 2:
-			result = "Estado";
+			result = Messages.OUTPUT_FILE.getValue();
+			break;
+
+		case 3:
+			result = Messages.STATUS.getValue();
 			break;
 
 		}
@@ -67,12 +74,15 @@ class TableModelAbstractMediaTak extends AbstractTableModel
 		switch (col)
 		{
 		case 0:
-			result = abstractMediaTask.getInputPath();
+			result = abstractMediaTask.getInputFileName();
 			break;
 		case 1:
 			result = abstractMediaTask.getPercentageCompleted();
 			break;
 		case 2:
+			result = abstractMediaTask.getOutputPath();
+			break;
+		case 3:
 			result = abstractMediaTask.getStatus();
 			break;
 
@@ -81,14 +91,18 @@ class TableModelAbstractMediaTak extends AbstractTableModel
 		return result;
 	}
 
-	public Class<?> getColumnClass(int col)
+	/*
+	 * public Class<?> getColumnClass(int col) { Class<?> result; if (col == 1)
+	 * result = Integer.class; else result = String.class; return result; }
+	 */
+	protected AbstractMediaTask getAbstractMediaTask(int row)
 	{
-		Class<?> result;
-		if (col == 1)
-			result = Integer.class;
-		else
-			result = String.class;
-		return result;
+		return this.lista.get(row);
+	}
+
+	protected int getRowOf(AbstractMediaTask abstractMediaTask)
+	{
+		return this.lista.indexOf(abstractMediaTask);
 	}
 
 }

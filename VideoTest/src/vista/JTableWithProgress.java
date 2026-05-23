@@ -1,4 +1,4 @@
-package vista_Progress;
+package vista;
 
 import javax.swing.JTable;
 import javax.swing.table.TableModel;

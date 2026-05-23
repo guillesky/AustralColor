@@ -16,6 +16,9 @@ public class Environment
 	public static final int IGNORE_DUPLICATED_FILES = 0;
 	public static final int RENAME_DUPLICATED_FILES = 1;
 	public static final int OVERWRITE_DUPLICATED_FILES = 2;
+	public static final String APP_NAME = "AustralColor";
+	public static final String VERSION = "v 1.0.0 R 20260522";
+	
 
 	private static Environment instance = null;
 	private String outputPath;
