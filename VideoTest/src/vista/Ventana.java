@@ -5,12 +5,15 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -33,6 +36,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
+import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
@@ -68,7 +73,7 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 
     private MediaFileChooser mediaFileChooser;
     private FolderFileChooser folderFileChooser;
- 
+
     private ButtonGroup group = new ButtonGroup();
     private JSpinner spinner;
     private JPanel panel_opciones;
@@ -77,11 +82,11 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
     private JRadioButton rdbtnRenombrar;
     private JPanel panel;
     private JLabel lblProcesosSimultaneos;
-  
+
     private JButton btnEliminar;
-    
+
     private JButton btnCancelar;
-    
+
     private JButton btnDetener;
     private JPanel panel_North;
     private JPanel panel_Sur;
@@ -94,6 +99,42 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
     private JButton btnChangeDirectory;
     private TitledBorder titledBorderOpciones;
     private boolean shuttingDown = false;
+
+    private class FileTransferHandler extends TransferHandler
+    {
+
+	@Override
+	public boolean canImport(TransferSupport support)
+	{
+	    // Verifica que sean archivos
+	    return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
+	}
+
+	@Override
+	public boolean importData(TransferSupport support)
+	{
+	    boolean flag = false;
+	    if (canImport(support))
+	    {
+
+		try
+		{
+		    Transferable transferable = support.getTransferable();
+		    List<File> fileList = (List<File>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+		    File[] files = fileList.toArray(new File[0]);
+		    Ventana.this.controlador.addFiles(files);
+
+		    flag = true;
+
+		} catch (Exception e)
+		{
+		    e.printStackTrace();
+		}
+
+	    }
+	    return flag;
+	}
+    }
 
     public Ventana()
     {
@@ -135,31 +176,28 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 	this.btnAgregar.addActionListener(this);
 	this.btnAgregar.setActionCommand(IVista.ADD_FILES);
 
-
 	btnEliminar = new JButton();
 	btnEliminar.setActionCommand((String) null);
-	
+
 	this.btnProcesar = new JButton();
-	
 
 	btnCancelar = new JButton();
-	
+
 	btnDetener = new JButton();
-	
-	this.panel_botones.add( Box.createVerticalGlue());
-	
+
+	this.panel_botones.add(Box.createVerticalGlue());
+
 	this.panel_botones.add(this.btnAgregar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
+	this.panel_botones.add(Box.createVerticalStrut(20));
 	this.panel_botones.add(btnEliminar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
+	this.panel_botones.add(Box.createVerticalStrut(20));
 	this.panel_botones.add(btnProcesar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
+	this.panel_botones.add(Box.createVerticalStrut(20));
 	this.panel_botones.add(btnCancelar);
-	this.panel_botones.add( Box.createVerticalStrut(20));
+	this.panel_botones.add(Box.createVerticalStrut(20));
 	this.panel_botones.add(btnDetener);
-	this.panel_botones.add( Box.createVerticalGlue());
-	
-	
+	this.panel_botones.add(Box.createVerticalGlue());
+
 	this.panel_opciones = new JPanel();
 	this.titledBorderOpciones = new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null);
 	panel_opciones.setBorder(this.titledBorderOpciones);
@@ -235,13 +273,14 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 	this.set3Icons(this.btnChangeDirectory, "icons/outputdir_normal.png", "icons/outputdir_rollover.png",
 		"icons/outputdir_disabled.png", 32);
 	this.setVisible(true);
+	this.setTransferHandler(new FileTransferHandler());
 
     }
 
     private void set3Icons(JButton button, String resourceNormal, String resourceRollover, String reourceDisabled,
 	    int height)
-    {Dimension size =
-    new Dimension(Integer.MAX_VALUE, 40);
+    {
+	Dimension size = new Dimension(Integer.MAX_VALUE, 40);
 	button.setIcon(getScaledImageIcon(resourceNormal, height));
 	button.setDisabledIcon(getScaledImageIcon(reourceDisabled, height));
 	button.setRolloverIcon(getScaledImageIcon(resourceRollover, height));
