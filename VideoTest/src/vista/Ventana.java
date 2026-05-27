@@ -203,8 +203,9 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 	this.panel_botones.add(Box.createVerticalGlue());
 
 	this.panel_opciones = new JPanel();
-	panel_opciones.setLayout(new BoxLayout(this.panel_opciones, BoxLayout.Y_AXIS));
-
+	// panel_opciones.setLayout(new BoxLayout(this.panel_opciones,
+	// BoxLayout.Y_AXIS));
+	panel_opciones.setLayout(new GridLayout(0, 1, 0, 0));
 	this.titledBorderOpciones = new TitledBorder(null, "", TitledBorder.LEADING, TitledBorder.TOP, null, null);
 	panel_opciones.setBorder(this.titledBorderOpciones);
 	this.panelWest.add(this.panel_opciones);
@@ -256,27 +257,20 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 	this.lblIdioma = new JLabel();
 	panelIdioma.add(lblIdioma);
 	panelIdioma.add(this.cbLanguage);
-	// this.panel_opciones.add(Box.createVerticalGlue());
-	JPanel panelAux = new JPanel();
-	panelAux.add(rdbtnSaltar);
-	panel_opciones.add(panelAux);
 	
-	panelAux = new JPanel();
-	panelAux.add(rdbtnSobreescribir);
-	panel_opciones.add(panelAux);
-	
-	
-	panelAux = new JPanel();
-	panelAux.add(rdbtnRenombrar);
-	panel_opciones.add(panelAux);
-	
-	
+
+	panel_opciones.add(rdbtnSaltar);
+
+	panel_opciones.add(rdbtnSobreescribir);
+
+	panel_opciones.add(rdbtnRenombrar);
+
 	panel_opciones.add(panelProcesosSimultaneos);
-//		panel_opciones.add(btnChangeDirectory);
+
 	panel_botones.add(btnChangeDirectory);
 	panel_opciones.add(panelIdioma);
 	this.cbLanguage.setSelectedItem(Environment.getInstance().getSelectedLanguage());
-	this.panel_opciones.add(Box.createVerticalGlue());
+	
 
 	this.setTextComponents();
 	this.modelo.addTableModelListener(this);
