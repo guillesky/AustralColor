@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import core.AbstractMediaTask;
+import i18n.Language;
 
 public interface IVista
 {
@@ -18,6 +19,7 @@ public interface IVista
 	public static final String IGNORE_DUPLICATED_FILES = "IGNORE_DUPLICATED_FILES";
 	public static final String RENAME_DUPLICATED_FILES = "RENAME_DUPLICATED_FILES";
 	public static final String OVERWRITE_DUPLICATED_FILES = "OVERWRITE_DUPLICATED_FILES";
+	public static final String CHANGE_LANGUAGE = "CHANGE_LANGUAGE";
 
 	void setControlador(Controlador controlador);
 
@@ -35,5 +37,9 @@ public interface IVista
 	public void updateLogText(String text);
 	int getDuplicateFilePolicy();
 	public void updateFPS(double fps);
+
+	Language getSelectedLanguage();
+
+	void updateLanguage(Language language);
 
 }

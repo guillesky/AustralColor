@@ -23,7 +23,8 @@ public enum Messages
 	ALREADY_EXISTING_FILES_IGNORED("Los siguientes archivos ya existian y seran ignorados:\n"),
 	ALREADY_EXISTING_FILES_RENAMED("Los siguientes archivos ya existian y seran procesados con los nombres:\n"),
 	ADDED("Se agregaron "), NEW_FILES_TO_PROCESS(" nuevos archivos para procesar.\n"),
-	CANCELED_TASK_OF("Cancelada la correccion de: ");
+	CANCELED_TASK_OF("Cancelada la correccion de: "), LANGUAGE_NAME("Español"), LANGUAGE("Idioma"),
+	SIMULTANEOUS_PROCESSES("Procesos Simultaneos");
 
 	private String value;
 

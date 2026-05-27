@@ -2,12 +2,13 @@ package core;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import i18n.AllLanguages;
 import i18n.Language;
 
 public class Environment
@@ -17,11 +18,13 @@ public class Environment
 	public static final int OVERWRITE_DUPLICATED_FILES = 2;
 	public static final String APP_NAME = "AustralColor";
 	public static final String VERSION = "v 1.0.0 R 20260522";
-	private HashMap<String,Language> Languages=new HashMap<String,Language>(); 
+	private AllLanguages allLanguages;
+	private Language selectedLanguage;
 
 	private static Environment instance = null;
 	private String outputPath;
 	private int duplicateFilePolicy = 0;
+	private boolean configHasChanged=false;
 
 	public static Environment getInstance()
 	{
@@ -32,30 +35,10 @@ public class Environment
 
 	private Environment()
 	{
+		this.allLanguages = Util.readAllLanguage();
 		this.readConfig();
 		File currentDir = new File(System.getProperty("user.dir"));
 		this.outputPath = currentDir.getAbsolutePath();
-
-	}
-
-	private void readLanguage(String fileCode)
-	{
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		Language l;
-
-		try
-		{
-			FileReader reader;
-			reader = new FileReader(fileCode);
-			l = gson.fromJson(reader, Language.class);
-			reader.close();
-			Language.i18n(l);
-		} catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
@@ -92,12 +75,40 @@ public class Environment
 			config = gson.fromJson(reader, Config.class);
 			reader.close();
 			MediaTaskManager.getInstance().setMaxSimultaneousProcessing(config.getMaxSimultaneousProcessing());
-			this.readLanguage(config.getLanguageFile());
+			this.selectedLanguage = this.allLanguages.getLanguageforFileCodeName(config.getLanguageFile());
+			this.selectedLanguage.setMessages();
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
 	}
+
+	public AllLanguages getAllLanguages()
+	{
+		return allLanguages;
+	}
+
+	public Language getSelectedLanguage()
+	{
+		return selectedLanguage;
+	}
+
+	public void setSelectedLanguage(Language selectedLanguage)
+	{
+		this.selectedLanguage = selectedLanguage;
+		this.configHasChanged();
+	}
+
+	public boolean isConfigHasChanged()
+	{
+		return configHasChanged;
+	}
+
+	public void configHasChanged()
+	{
+		this.configHasChanged = true;
+	}
+
 }

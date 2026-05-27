@@ -6,12 +6,17 @@ import javax.swing.table.TableModel;
 public class JTableWithProgress extends JTable
 {
 
-    public JTableWithProgress(TableModel dm, int colWithProgress)
-    {
-	super(dm);
-	// Renderer de progreso
-	this.getColumnModel().getColumn(1).setCellRenderer(new ProgressBarRenderer());
+	public JTableWithProgress(TableModel dm, int colWithProgress)
+	{
+		super(dm);
+		this.configureRender();
+	}
 
-    }
+	public void configureRender()
+	{
+		// Renderer de progreso
+		this.getColumnModel().getColumn(1).setCellRenderer(new ProgressBarRenderer());
+
+	}
 
 }

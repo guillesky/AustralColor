@@ -32,12 +32,12 @@ public class Language
 	return words;
     }
 
-    public static void i18n(Language language)
+    public void setMessages()
     {
 
 	for (Messages key : Messages.values())
 	{
-	    String msg = language.getWords().get(key.name());
+	    String msg = this.getWords().get(key.name());
 	    if (msg != null)
 	    {
 		key.setValue(msg);
@@ -48,10 +48,10 @@ public class Language
 	}
     }
 
-    public static Language getLanguage()
+    public static Language getLanguage(String fileCode)
     {
 	Language language = new Language();
-	language.fileCode="es";
+	language.fileCode=fileCode;
 	for (Messages key : Messages.values())
 	{
 	    language.words.put(key.name(), key.getValue());
@@ -59,30 +59,12 @@ public class Language
 	return language;
     }
 
-    public static void i18n(String languageCode)
-    {
-	String path = "i18n/" + languageCode + ".json";
-	for (Messages key : Messages.values())
-	{
-
-	}
-	/*
-	 * if (!file.exists()) { throw new RuntimeException("Language file not found: "
-	 * + path); }
-	 * 
-	 * Json json = new Json(); ObjectMap<String, String> loaded =
-	 * json.fromJson(ObjectMap.class, file);
-	 * 
-	 * for (Messages key : Messages.values()) { String msg = loaded.get(key.name());
-	 * if (msg != null) { key.setValue(msg); } else { key.setValue("???" +
-	 * key.name()); } }
-	 */
-    }
+  
 
     @Override
     public String toString()
     {
-	return "Language [fileCode=" + fileCode + ", words=" + words + "]";
+	return this.words.get("LANGUAGE_NAME");
     }
 
 }

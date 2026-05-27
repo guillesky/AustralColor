@@ -1,6 +1,7 @@
 {
   "fileCode": "es",
-  "words": {
+  "words": {"LANGUAGE":"Idioma:",
+	"LANGUAGE_NAME":"Español",
     "CHANGE_OUTPUT_FOLDER": "Cambiar Carpeta Destino",
     "EXITING": "Saliendo",
     "ALREADY_EXISTING_FILES_RENAMED": "Los siguientes archivos ya existian y seran procesados con los nombres:\n",
@@ -48,6 +49,8 @@
     "PERCENT": "_porciento",
     "CANCEL": "Cancelar",
     "VIDEO_FILES": "Archivos de Video",
-    "EXIT": "Salir"
+    "EXIT": "Salir",
+	"SIMULTANEOUS_PROCESSES":"Procesos Simultaneos"
+	
   }
 }

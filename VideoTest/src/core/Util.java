@@ -1,7 +1,17 @@
 package core;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Set;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import i18n.AllLanguages;
+import i18n.Language;
 
 public class Util
 {
@@ -15,9 +25,9 @@ public class Util
 
 	private static final Set<String> IMAGE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "bmp", "gif", "webp", "dng", "gpr",
 			"arw");
-	
-	public static final String outputVideoExtension=".mp4";
-	public static final String outputImageExtension=".jpg";
+
+	public static final String outputVideoExtension = ".mp4";
+	public static final String outputImageExtension = ".jpg";
 
 	private static String sufix = "corrected";
 
@@ -92,4 +102,70 @@ public class Util
 		return result;
 	}
 
+	public static Language readLanguage(String fileCode)
+	{
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		Language l = null;
+
+		try
+		{
+			FileReader reader;
+			reader = new FileReader(fileCode);
+			l = gson.fromJson(reader, Language.class);
+			reader.close();
+
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return l;
+	}
+
+	public static AllLanguages readAllLanguage()
+	{
+		AllLanguages result = null;
+		File carpeta = new File("i18n");
+
+		File[] archivosJson = carpeta.listFiles(new FilenameFilter()
+		{
+
+			@Override
+			public boolean accept(File dir, String nombre)
+			{
+				return nombre.toLowerCase().endsWith(".json");
+			}
+		});
+
+		if (archivosJson != null)
+		{
+			result = new AllLanguages();
+			for (File archivo : archivosJson)
+			{
+				Language language = Util.readLanguage(archivo.getAbsolutePath());
+				result.addLanguaje(language);
+			}
+		}
+		return result;
+	}
+
+	public static void saveConfig(Config config)
+	{
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		FileWriter writer;
+		try
+		{
+			writer = new FileWriter("config.json");
+			gson.toJson(config, writer);
+			writer.close();
+
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 }

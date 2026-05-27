@@ -2,7 +2,7 @@ package core;
 
 public class Config
 {
-	private String languageFile = "es.json";
+	private String languageFile = "es";
 	private int maxSimultaneousProcessing = 2;
 
 	public String getLanguageFile()
@@ -14,5 +14,13 @@ public class Config
 	{
 		return maxSimultaneousProcessing;
 	}
+
+	public Config(String languageFile, int maxSimultaneousProcessing)
+	{
+		super();
+		this.languageFile = languageFile;
+		this.maxSimultaneousProcessing = maxSimultaneousProcessing;
+	}
+	
 
 }

@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import org.opencv.core.Mat;
 
 import core.AbstractMediaTask;
+import core.Config;
 import core.Environment;
 import core.MediaImportResult;
 import core.MediaTaskListener;
 import core.MediaTaskManager;
 import core.TaskFactory;
+import core.Util;
 import core.VideoAnalysisResult;
 import core.VideoTask;
+import i18n.Language;
 import i18n.Messages;
 
 public class Controlador implements ActionListener, MediaTaskListener
@@ -63,14 +66,24 @@ public class Controlador implements ActionListener, MediaTaskListener
 		case IVista.IGNORE_DUPLICATED_FILES:
 			this.duplicatedFilePolicyChange();
 			break;
+		case IVista.CHANGE_LANGUAGE:
+			this.changeLanguage();
+			break;
 		}
 
+	}
+
+	private void changeLanguage()
+	{
+		Language language = this.vista.getSelectedLanguage();
+		language.setMessages();
+		this.vista.updateLanguage(language);
+		Environment.getInstance().setSelectedLanguage(language);
 	}
 
 	private void stopAll()
 	{
 		MediaTaskManager.getInstance().emitStopSignal();
-
 	}
 
 	private void startTasks()
@@ -243,6 +256,22 @@ public class Controlador implements ActionListener, MediaTaskListener
 	{
 		this.vista.updateTaskStatus(videoTask);
 
+	}
+
+	public void changeSimultaneosProcess(int value)
+	{
+		MediaTaskManager.getInstance().setMaxSimultaneousProcessing(value);
+		Environment.getInstance().configHasChanged();
+	}
+
+	public void shutdown()
+	{
+		if (Environment.getInstance().isConfigHasChanged())
+		{
+			Config config = new Config(Environment.getInstance().getSelectedLanguage().getFileCode(),MediaTaskManager.getInstance().getMaxSimultaneousProcessing());
+			Util.saveConfig(config);
+		}
+		System.exit(0);
 	}
 
 }

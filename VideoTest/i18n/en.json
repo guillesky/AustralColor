@@ -1,6 +1,8 @@
 {
   "fileCode": "en",
   "words": {
+	"LANGUAGE":"Language:",
+	"LANGUAGE_NAME":"English",
     "CHANGE_OUTPUT_FOLDER": "Change Output Folder",
     "EXITING": "Exiting",
     "ALREADY_EXISTING_FILES_RENAMED": "The following files already existed and will be processed with these names:\n",
@@ -48,6 +50,7 @@
     "PERCENT": "_percent",
     "CANCEL": "Cancel",
     "VIDEO_FILES": "Video Files",
-    "EXIT": "Exit"
+    "EXIT": "Exit",
+	"SIMULTANEOUS_PROCESSES":"Simultaneous Processes"
   }
 }

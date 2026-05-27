@@ -37,7 +37,7 @@ public class IOJsonPrueba
 		reader = new FileReader(fileCode);
 		l = gson.fromJson(reader, Language.class);
 		reader.close();
-		Language.i18n(l);
+		l.setMessages();
 
 		for (Messages key : Messages.values())
 		{
@@ -54,7 +54,7 @@ public class IOJsonPrueba
 		{
 
 			FileWriter writer;
-			Language l = Language.getLanguage();
+			Language l = Language.getLanguage("es");
 
 			writer = new FileWriter("es.json");
 			gson.toJson(l, writer);
