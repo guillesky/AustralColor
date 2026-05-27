@@ -1,15 +1,14 @@
 package core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import i18n.Language;
-import i18n.Messages;
 
 public class Environment
 {
@@ -18,7 +17,7 @@ public class Environment
 	public static final int OVERWRITE_DUPLICATED_FILES = 2;
 	public static final String APP_NAME = "AustralColor";
 	public static final String VERSION = "v 1.0.0 R 20260522";
-	
+	private HashMap<String,Language> Languages=new HashMap<String,Language>(); 
 
 	private static Environment instance = null;
 	private String outputPath;
