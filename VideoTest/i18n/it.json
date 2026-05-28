@@ -51,6 +51,8 @@
     "CANCEL": "Annulla",
     "VIDEO_FILES": "File Video",
     "EXIT": "Esci",
-    "SIMULTANEOUS_PROCESSES": "Processi Simultanei"
+    "SIMULTANEOUS_PROCESSES": "Processi Simultanei",
+	"CREDITS": "Crediti",
+	"CREDITS_TEXT": "AustralColor\nVersione 1.0.0\n\nApplicazione sviluppata per la correzione automatica del colore in immagini e video subacquei.\n\nAutore:\nGuillermo Lazzurri\n\nContatto:\nguillesky@gmail.com\n\nSviluppato in:\nJava\n\nTecnologie utilizzate:\n- Java Swing\n- OpenCV\n- FFmpeg\n- Gson\n- Multithreading\n\nCaratteristiche:\n- Correzione automatica del colore per fotografia e video subacquei\n- Elaborazione concorrente\n- Supporto multilingua\n- Elaborazione parziale e annullamento sicuro\n- Compatibile con Windows e Android\n\nProgettato e sviluppato in Argentina.\n\nRingraziamenti:\nAlla comunita di immersioni, fotografia subacquea e sviluppo open source.\n\n2026"
   }
 }

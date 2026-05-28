@@ -24,7 +24,8 @@ public enum Messages
 	ALREADY_EXISTING_FILES_RENAMED("Los siguientes archivos ya existian y seran procesados con los nombres:\n"),
 	ADDED("Se agregaron "), NEW_FILES_TO_PROCESS(" nuevos archivos para procesar.\n"),
 	CANCELED_TASK_OF("Cancelada la correccion de: "), LANGUAGE_NAME("Español"), LANGUAGE("Idioma"),
-	SIMULTANEOUS_PROCESSES("Procesos Simultaneos");
+	SIMULTANEOUS_PROCESSES("Procesos Simultaneos"), CREDITS("Creditos"), CREDITS_TEXT(
+			"AustralColor\nVersion 1.0.0\n\nAplicacion desarrollada para la correccion automatica de color en imagenes y videos submarinos.\n\nAutor:\nGuillermo Lazzurri\n\nDesarrollado en:\nJava\n\nTecnologias utilizadas:\n- Java Swing\n- OpenCV\n- FFmpeg\n- Gson\n- Multithreading\n\nCaracteristicas:\n- Correccion automatica de color para fotografia y video submarino\n- Procesamiento concurrente\n- Soporte multilenguaje\n- Procesamiento parcial y cancelacion segura\n- Compatible con Windows y Android\n\nDisenado y desarrollado en Argentina.\n\nAgradecimientos:\nA la comunidad de buceo, fotografia submarina y desarrollo open source.\n\n2026");
 
 	private String value;
 

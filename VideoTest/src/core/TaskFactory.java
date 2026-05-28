@@ -119,7 +119,7 @@ public class TaskFactory
 	do
 	{
 	    outputFileName = Environment.getInstance().getOutputPath() + File.separator + onlyName + "_"
-		    + Messages.CORRECTED.getValue() + "_" + count + "_" + extension;
+		    + Messages.CORRECTED.getValue() + "_(" + count+")"  + extension;
 	    outputFile = new File(outputFileName);
 	    count++;
 

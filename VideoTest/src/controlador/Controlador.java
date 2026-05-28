@@ -69,8 +69,17 @@ public class Controlador implements ActionListener, MediaTaskListener
 		case IVista.CHANGE_LANGUAGE:
 			this.changeLanguage();
 			break;
+		case IVista.CREDITS:
+			this.showCredits();
+			break;
+			
 		}
 
+	}
+
+	private void showCredits()
+	{
+		this.vista.showCredits();
 	}
 
 	private void changeLanguage()

@@ -114,10 +114,10 @@ public class Util
 			reader = new FileReader(fileCode);
 			l = gson.fromJson(reader, Language.class);
 			reader.close();
-
+			
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return l;
@@ -163,7 +163,7 @@ public class Util
 
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

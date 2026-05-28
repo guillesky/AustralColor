@@ -20,6 +20,7 @@ public interface IVista
 	public static final String RENAME_DUPLICATED_FILES = "RENAME_DUPLICATED_FILES";
 	public static final String OVERWRITE_DUPLICATED_FILES = "OVERWRITE_DUPLICATED_FILES";
 	public static final String CHANGE_LANGUAGE = "CHANGE_LANGUAGE";
+	public static final String CREDITS = "CREDITS";
 
 	void setControlador(Controlador controlador);
 
@@ -41,5 +42,7 @@ public interface IVista
 	Language getSelectedLanguage();
 
 	void updateLanguage(Language language);
+
+	void showCredits();
 
 }

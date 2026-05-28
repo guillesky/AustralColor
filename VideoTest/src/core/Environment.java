@@ -17,7 +17,7 @@ public class Environment
 	public static final int RENAME_DUPLICATED_FILES = 1;
 	public static final int OVERWRITE_DUPLICATED_FILES = 2;
 	public static final String APP_NAME = "AustralColor";
-	public static final String VERSION = "v 1.0.0 R 20260522";
+	public static final String VERSION = "v 1.0.0 R 20260528";
 	private AllLanguages allLanguages;
 	private Language selectedLanguage;
 
