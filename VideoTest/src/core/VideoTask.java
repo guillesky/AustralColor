@@ -10,6 +10,7 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
 import i18n.Messages;
+import util.Util;
 
 public class VideoTask extends AbstractMediaTask
 {

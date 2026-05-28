@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import org.opencv.core.Mat;
 
 import core.AbstractMediaTask;
-import core.Config;
 import core.Environment;
 import core.MediaImportResult;
 import core.MediaTaskListener;
 import core.MediaTaskManager;
 import core.TaskFactory;
-import core.Util;
 import core.VideoAnalysisResult;
 import core.VideoTask;
 import i18n.Language;
 import i18n.Messages;
+import util.Config;
+import util.Util;
 
 public class Controlador implements ActionListener, MediaTaskListener
 {

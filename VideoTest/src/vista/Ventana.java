@@ -169,7 +169,7 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 		this.splitPaneArribaAbajo.setLeftComponent(scrollPaneTable);
 		this.scrollPane = new JScrollPane();
 		this.splitPaneArribaAbajo.setRightComponent(this.scrollPane);
-		this.splitPaneArribaAbajo.setResizeWeight(0.8);
+		//this.splitPaneArribaAbajo.setResizeWeight(0.1);
 		this.modelo = new TableModelAbstractMediaTak();
 		this.table = new JTableWithProgress(modelo, 1);
 		this.scrollPaneTable.setViewportView(this.table);
