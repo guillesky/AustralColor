@@ -299,7 +299,9 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 				"/icons/outputdir_disabled.png", 32);
 		this.setVisible(true);
 		this.setAllActionCommands();
-
+		ImageIcon iOriginal = new ImageIcon(getClass().getResource("/icons/AustralColor_256_circulo.png"));
+		this.setIconImage(iOriginal.getImage());
+		
 		this.setTransferHandler(new FileTransferHandler());
 
 	}
@@ -317,6 +319,7 @@ public class Ventana extends JFrame implements IVista, ActionListener, TableMode
 		this.rdbtnSobreescribir.setActionCommand(IVista.OVERWRITE_DUPLICATED_FILES);
 		this.cbLanguage.setActionCommand(IVista.CHANGE_LANGUAGE);
 		this.btnCreditos.setActionCommand(IVista.CREDITS);
+		
 	}
 
 	private void set3Icons(JButton button, String resourceNormal, String resourceRollover, String reourceDisabled,
