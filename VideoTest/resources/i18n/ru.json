@@ -53,6 +53,6 @@
     "EXIT": "Vyhod",
     "SIMULTANEOUS_PROCESSES": "Odnovremennye Processy",
 	"CREDITS": "Credits",
-	"CREDITS_TEXT": "AustralColor\nVersiya 1.0.0\n\nPrilozhenie dlya avtomaticheskoy korrekcii cveta v podvodnyh izobrazheniyah i video.\n\nAvtor:\nGuillermo Lazzurri\n\nKontakt:\nguillesky@gmail.com\n\nRazrabotano na:\nJava\n\nIspolzuemye tehnologii:\n- Java Swing\n- OpenCV\n- FFmpeg\n- Gson\n- Multithreading\n\nVozmozhnosti:\n- Avtomaticheskaya korrekciya cveta dlya podvodnoy fotografii i video\n- Odnovremennaya obrabotka\n- Podderzhka neskolkih yazykov\n- Chastichnaya obrabotka i bezopasnaya otmena\n- Sovmestimost s Windows i Android\n\nRazrabotano v Argentine.\n\nBlagodarnosti:\nSoobshchestvu dayvinga, podvodnoy fotografii i open source razrabotki.\n\n2026"
+	"CREDITS_TEXT": "\n\nPrilozhenie dlya avtomaticheskoy korrekcii cveta v podvodnyh izobrazheniyah i video.\n\nAvtor:\nGuillermo Lazzurri\n\nKontakt:\nguillesky@gmail.com\n\nRazrabotano na:\nJava\n\nIspolzuemye tehnologii:\n- Java Swing\n- OpenCV\n- FFmpeg\n- Gson\n- Multithreading\n\nVozmozhnosti:\n- Avtomaticheskaya korrekciya cveta dlya podvodnoy fotografii i video\n- Odnovremennaya obrabotka\n- Podderzhka neskolkih yazykov\n- Chastichnaya obrabotka i bezopasnaya otmena\n- Sovmestimost s Windows i Android\n\nRazrabotano v Argentine.\n\nBlagodarnosti:\nSoobshchestvu dayvinga, podvodnoy fotografii i open source razrabotki.\n\n2026"
   }
 }

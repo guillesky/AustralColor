@@ -52,7 +52,7 @@
     "EXIT": "Salir",
 	"SIMULTANEOUS_PROCESSES":"Procesos Simultaneos",
 	"CREDITS": "Creditos",
-	"CREDITS_TEXT": "AustralColor\nVersion 1.0.0\n\nAplicacion desarrollada para la correccion automatica de color en imagenes y videos submarinos.\n\nAutor:\nGuillermo Lazzurri\n\nContacto:\nguillesky@gmail.com\n\nDesarrollado en:\nJava\n\nTecnologias utilizadas:\n- Java Swing\n- OpenCV\n- FFmpeg\n- Gson\n- Multithreading\n\nCaracteristicas:\n- Correccion automatica de color para fotografia y video submarino\n- Procesamiento concurrente\n- Soporte multilenguaje\n- Procesamiento parcial y cancelacion segura\n- Compatible con Windows y Android\n\nDisenado y desarrollado en Argentina.\n\nAgradecimientos:\nA la comunidad de buceo, fotografia submarina y desarrollo open source.\n\n2026"
+	"CREDITS_TEXT": "\n\nAplicacion desarrollada para la correccion automatica de color en imagenes y videos submarinos.\n\nAutor:\nGuillermo Lazzurri\n\nContacto:\nguillesky@gmail.com\n\nDesarrollado en:\nJava\n\nTecnologias utilizadas:\n- Java Swing\n- OpenCV\n- FFmpeg\n- Gson\n- Multithreading\n\nCaracteristicas:\n- Correccion automatica de color para fotografia y video submarino\n- Procesamiento concurrente\n- Soporte multilenguaje\n- Procesamiento parcial y cancelacion segura\n- Compatible con Windows y Android\n\nDisenado y desarrollado en Argentina.\n\nAgradecimientos:\nA la comunidad de buceo, fotografia submarina y desarrollo open source.\n\n2026"
 	
   }
 }

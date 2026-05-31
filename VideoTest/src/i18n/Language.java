@@ -2,8 +2,9 @@ package i18n;
 
 import java.util.HashMap;
 
+import javax.swing.JTextArea;
 
-
+import core.Environment;
 
 public class Language
 {
@@ -38,28 +39,34 @@ public class Language
 	for (Messages key : Messages.values())
 	{
 	    String msg = this.getWords().get(key.name());
-	    if (msg != null)
+	    if (key == Messages.CREDITS_TEXT)
 	    {
-		key.setValue(msg);
+		String credistText = Environment.APP_NAME + "\n" + Environment.VERSION + msg;
+		Messages.CREDITS_TEXT.setValue(credistText);
 	    } else
 	    {
-		key.setValue("???" + key.name());
+		if (msg != null)
+		{
+		    key.setValue(msg);
+		} else
+		{
+		    key.setValue("???" + key.name());
+		}
 	    }
 	}
+
     }
 
     public static Language getLanguage(String fileCode)
     {
 	Language language = new Language();
-	language.fileCode=fileCode;
+	language.fileCode = fileCode;
 	for (Messages key : Messages.values())
 	{
 	    language.words.put(key.name(), key.getValue());
 	}
 	return language;
     }
-
-  
 
     @Override
     public String toString()

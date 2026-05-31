@@ -15,102 +15,114 @@ import util.Util;
 
 public class Environment
 {
-	public static final int IGNORE_DUPLICATED_FILES = 0;
-	public static final int RENAME_DUPLICATED_FILES = 1;
-	public static final int OVERWRITE_DUPLICATED_FILES = 2;
-	public static final String APP_NAME = "AustralColor";
-	public static final String VERSION = "v 1.0.0 R 20260528";
-	private AllLanguages allLanguages;
-	private Language selectedLanguage;
+    public static final int IGNORE_DUPLICATED_FILES = 0;
+    public static final int RENAME_DUPLICATED_FILES = 1;
+    public static final int OVERWRITE_DUPLICATED_FILES = 2;
+    public static final String APP_NAME = "AustralColor";
+    public static final String VERSION = "v 1.0.1 R 20260531";
+    private AllLanguages allLanguages;
+    private Language selectedLanguage;
 
-	private static Environment instance = null;
-	private String outputPath;
-	private int duplicateFilePolicy = 0;
-	private boolean configHasChanged=false;
+    private static Environment instance = null;
+    private String outputPath;
+    private int duplicateFilePolicy = 0;
+    private boolean configHasChanged = false;
 
-	public static Environment getInstance()
+    public static Environment getInstance()
+    {
+	if (instance == null)
+	    instance = new Environment();
+	return instance;
+    }
+
+    private Environment()
+    {
+	this.allLanguages = Util.readAllLanguage();
+	this.readConfig();
+	this.initializeOutputPath();
+
+    }
+
+    private void initializeOutputPath()
+    {
+	String home = System.getProperty("user.home");
+
+	File carpetaDestino = new File(home, "AustralColor");
+
+	if (!carpetaDestino.exists())
 	{
-		if (instance == null)
-			instance = new Environment();
-		return instance;
+	    carpetaDestino.mkdirs();
+	}
+	this.outputPath = carpetaDestino.getAbsolutePath();
+    }
+
+    public String getOutputPath()
+    {
+	return outputPath;
+    }
+
+    public void setOutputPath(String outputPath)
+    {
+	this.outputPath = outputPath;
+    }
+
+    public int getDuplicateFilePolicy()
+    {
+	return duplicateFilePolicy;
+    }
+
+    public void setDuplicateFilePolicy(int duplicateFilePolicy)
+    {
+	this.duplicateFilePolicy = duplicateFilePolicy;
+    }
+
+    private void readConfig()
+    {
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+	FileReader reader;
+	Config config;
+
+	try
+	{
+	    reader = new FileReader("config.json");
+	    config = gson.fromJson(reader, Config.class);
+	    reader.close();
+	    MediaTaskManager.getInstance().setMaxSimultaneousProcessing(config.getMaxSimultaneousProcessing());
+	    this.selectedLanguage = this.allLanguages.getLanguageforFileCodeName(config.getLanguageFile());
+	    this.selectedLanguage.setMessages();
+	} catch (IOException e)
+	{
+
+	    e.printStackTrace();
 	}
 
-	private Environment()
-	{
-		this.allLanguages = Util.readAllLanguage();
-		this.readConfig();
-		File currentDir = new File(System.getProperty("user.dir"));
-		this.outputPath = currentDir.getAbsolutePath();
+    }
 
-	}
+    public AllLanguages getAllLanguages()
+    {
+	return allLanguages;
+    }
 
-	public String getOutputPath()
-	{
-		return outputPath;
-	}
+    public Language getSelectedLanguage()
+    {
+	return selectedLanguage;
+    }
 
-	public void setOutputPath(String outputPath)
-	{
-		this.outputPath = outputPath;
-	}
+    public void setSelectedLanguage(Language selectedLanguage)
+    {
+	this.selectedLanguage = selectedLanguage;
+	this.configHasChanged();
+    }
 
-	public int getDuplicateFilePolicy()
-	{
-		return duplicateFilePolicy;
-	}
+    public boolean isConfigHasChanged()
+    {
+	return configHasChanged;
+    }
 
-	public void setDuplicateFilePolicy(int duplicateFilePolicy)
-	{
-		this.duplicateFilePolicy = duplicateFilePolicy;
-	}
-
-	private void readConfig()
-	{
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-		FileReader reader;
-		Config config;
-
-		try
-		{
-			reader = new FileReader("config.json");
-			config = gson.fromJson(reader, Config.class);
-			reader.close();
-			MediaTaskManager.getInstance().setMaxSimultaneousProcessing(config.getMaxSimultaneousProcessing());
-			this.selectedLanguage = this.allLanguages.getLanguageforFileCodeName(config.getLanguageFile());
-			this.selectedLanguage.setMessages();
-		} catch (IOException e)
-		{
-			
-			e.printStackTrace();
-		}
-
-	}
-
-	public AllLanguages getAllLanguages()
-	{
-		return allLanguages;
-	}
-
-	public Language getSelectedLanguage()
-	{
-		return selectedLanguage;
-	}
-
-	public void setSelectedLanguage(Language selectedLanguage)
-	{
-		this.selectedLanguage = selectedLanguage;
-		this.configHasChanged();
-	}
-
-	public boolean isConfigHasChanged()
-	{
-		return configHasChanged;
-	}
-
-	public void configHasChanged()
-	{
-		this.configHasChanged = true;
-	}
+    public void configHasChanged()
+    {
+	this.configHasChanged = true;
+    }
 
 }
