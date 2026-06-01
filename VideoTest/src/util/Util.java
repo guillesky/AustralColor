@@ -80,14 +80,26 @@ public class Util
 
 	String exeName = os.contains("win") ? "ffmpeg.exe" : "ffmpeg";
 
-	File ffmpegFile = new File("ffmpeg", exeName);
+	File[] posiblesRutas =
+	{ new File("ffmpeg", exeName), new File("app/ffmpeg", exeName) };
 
-	if (!ffmpegFile.exists())
+	for (File f : posiblesRutas)
 	{
-	    throw new RuntimeException("No se encontró ffmpeg en: " + ffmpegFile.getAbsolutePath());
+	    if (f.exists())
+	    {
+		return f.getAbsolutePath();
+	    }
 	}
 
-	return ffmpegFile.getAbsolutePath();
+	StringBuilder msg = new StringBuilder();
+	msg.append("No se encontró ffmpeg.\n");
+
+	for (File f : posiblesRutas)
+	{
+	    msg.append(f.getAbsolutePath()).append("\n");
+	}
+
+	throw new RuntimeException(msg.toString());
     }
 
     public static String getSufix()
