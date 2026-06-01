@@ -17,9 +17,12 @@ public class Config
 
 	public Config(String languageFile, int maxSimultaneousProcessing)
 	{
-		super();
 		this.languageFile = languageFile;
 		this.maxSimultaneousProcessing = maxSimultaneousProcessing;
+	}
+	
+	public Config() 
+	{
 	}
 	
 

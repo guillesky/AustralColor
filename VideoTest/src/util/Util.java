@@ -1,6 +1,7 @@
 package util;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +33,46 @@ public class Util
     public static final String outputImageExtension = ".jpg";
 
     private static String sufix = "corrected";
+
+    public static File getConfigFile()
+    {
+	String appData = System.getenv("APPDATA");
+	File configDir = new File(appData, "AustralColor");
+	if (!configDir.exists())
+	{
+	    configDir.mkdirs();
+	}
+	File configFile = new File(configDir, "config.json");
+	return configFile;
+    }
+
+    public static void saveConfig(Config config)
+    {
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	File configFile = Util.getConfigFile();
+	try (FileWriter writer = new FileWriter(configFile))
+	{
+	    gson.toJson(config, writer);
+	} catch (IOException e)
+	{
+	    e.printStackTrace();
+	}
+
+    }
+
+    public static Config readConfig()
+    {
+	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	Config config = null;
+	File configFile = Util.getConfigFile();
+	try (FileReader reader = new FileReader(configFile))
+	{
+	    config = gson.fromJson(reader, Config.class);
+	} catch (Exception e)
+	{
+	}
+	return config;
+    }
 
     public static String getFFmpegPath()
     {
@@ -141,22 +182,4 @@ public class Util
 
     }
 
-    public static void saveConfig(Config config)
-    {
-	Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-	FileWriter writer;
-	try
-	{
-	    writer = new FileWriter("config.json");
-	    gson.toJson(config, writer);
-	    writer.close();
-
-	} catch (IOException e)
-	{
-
-	    e.printStackTrace();
-	}
-
-    }
 }

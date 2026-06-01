@@ -1,12 +1,6 @@
 package core;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FilenameFilter;
-import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import i18n.AllLanguages;
 import i18n.Language;
@@ -78,25 +72,15 @@ public class Environment
 
     private void readConfig()
     {
-	Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-	FileReader reader;
-	Config config;
-
-	try
+	Config config = Util.readConfig();
+	if (config == null)
 	{
-	    reader = new FileReader("config.json");
-	    config = gson.fromJson(reader, Config.class);
-	    reader.close();
-	    MediaTaskManager.getInstance().setMaxSimultaneousProcessing(config.getMaxSimultaneousProcessing());
-	    this.selectedLanguage = this.allLanguages.getLanguageforFileCodeName(config.getLanguageFile());
-	    this.selectedLanguage.setMessages();
-	} catch (IOException e)
-	{
-
-	    e.printStackTrace();
+	    config = new Config();
+	    this.configHasChanged = true;
 	}
-
+	MediaTaskManager.getInstance().setMaxSimultaneousProcessing(config.getMaxSimultaneousProcessing());
+	this.selectedLanguage = this.allLanguages.getLanguageforFileCodeName(config.getLanguageFile());
+	this.selectedLanguage.setMessages();
     }
 
     public AllLanguages getAllLanguages()
